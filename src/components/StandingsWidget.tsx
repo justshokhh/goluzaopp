@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Trophy, Target, Award } from 'lucide-react';
+import { Trophy } from 'lucide-react';
 import type { StandingRow, FormResult } from '../types/football';
 import { TeamCrest } from './TeamCrest';
-import { mockStandings, mockTopScorers, mockTopAssists } from '../services/mockData';
+import { mockStandings } from '../services/mockData';
 import { getTeamLogo } from '../services/teamLogos';
 
-export type TournamentKey = 'uz_superliga' | 'ucl' | 'uel' | 'premier_league' | 'laliga';
+export type TournamentKey = 'uz_superliga' | 'ucl' | 'premier_league' | 'laliga' | 'uel';
 
 export interface StandingsWidgetProps {
   initialTournament?: TournamentKey;
@@ -13,7 +13,7 @@ export interface StandingsWidgetProps {
   className?: string;
 }
 
-// Barcha 5 ta liga uchun boyitilgan rasmiy jadvallar
+// 5 ta liga uchun rasmiy jadvallar
 const TOURNAMENT_STANDINGS: Record<
   TournamentKey,
   {
@@ -21,10 +21,9 @@ const TOURNAMENT_STANDINGS: Record<
     subtitle: string;
     season: string;
     theme: {
-      gradient: string;
+      headerBg: string;
       accent: string;
-      badge: string;
-      border: string;
+      pillActive: string;
     };
     rows: StandingRow[];
   }
@@ -34,10 +33,9 @@ const TOURNAMENT_STANDINGS: Record<
     subtitle: '2026-yilgi mavsum turnir jadvali',
     season: '2026',
     theme: {
-      gradient: 'from-[#06241c] via-[#093329] to-[#0a0f14]',
-      accent: 'text-[#10b981]',
-      badge: 'bg-[#10b981]/20 border-[#10b981]/40 text-[#6ee7b7]',
-      border: 'border-[#065f46]/60',
+      headerBg: 'bg-gradient-to-r from-[#031711] via-[#06261c] to-[#06120e]',
+      accent: 'text-[#34d399]',
+      pillActive: 'bg-[#10b981] text-black',
     },
     rows: mockStandings,
   },
@@ -46,10 +44,9 @@ const TOURNAMENT_STANDINGS: Record<
     subtitle: 'Umumiy liga bosqichi jadvali',
     season: '2025/26',
     theme: {
-      gradient: 'from-[#0a1128] via-[#0e1b4d] to-[#090d16]',
-      accent: 'text-[#93c5fd]',
-      badge: 'bg-[#3b82f6]/20 border-[#3b82f6]/40 text-[#93c5fd]',
-      border: 'border-[#1e3a8a]/60',
+      headerBg: 'bg-gradient-to-r from-[#081026] via-[#0c1a40] to-[#080d1a]',
+      accent: 'text-[#38bdf8]',
+      pillActive: 'bg-[#38bdf8] text-black',
     },
     rows: [
       {
@@ -107,10 +104,9 @@ const TOURNAMENT_STANDINGS: Record<
     subtitle: 'Angliya Chempionati jadvali',
     season: '2025/26',
     theme: {
-      gradient: 'from-[#1e072b] via-[#2e0b40] to-[#0d0a12]',
+      headerBg: 'bg-gradient-to-r from-[#170522] via-[#250937] to-[#0d0514]',
       accent: 'text-[#f472b6]',
-      badge: 'bg-[#e11d48]/20 border-[#e11d48]/40 text-[#f472b6]',
-      border: 'border-[#701a75]/60',
+      pillActive: 'bg-[#f472b6] text-black',
     },
     rows: [
       {
@@ -156,10 +152,9 @@ const TOURNAMENT_STANDINGS: Record<
     subtitle: 'Ispaniya Chempionati jadvali',
     season: '2025/26',
     theme: {
-      gradient: 'from-[#26090c] via-[#380d12] to-[#0f0a0b]',
-      accent: 'text-[#fca5a5]',
-      badge: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#fca5a5]',
-      border: 'border-[#991b1b]/60',
+      headerBg: 'bg-gradient-to-r from-[#1c0507] via-[#2d090d] to-[#0e0405]',
+      accent: 'text-[#f87171]',
+      pillActive: 'bg-[#ef4444] text-white',
     },
     rows: [
       {
@@ -199,10 +194,9 @@ const TOURNAMENT_STANDINGS: Record<
     subtitle: 'Yevropa Ligasi umumiy bosqichi',
     season: '2025/26',
     theme: {
-      gradient: 'from-[#1a0f07] via-[#2b1405] to-[#0d0d0d]',
-      accent: 'text-[#fdba74]',
-      badge: 'bg-[#f97316]/20 border-[#f97316]/40 text-[#fdba74]',
-      border: 'border-[#c2410c]/60',
+      headerBg: 'bg-gradient-to-r from-[#140b06] via-[#241207] to-[#0a0807]',
+      accent: 'text-[#fb923c]',
+      pillActive: 'bg-[#f97316] text-black',
     },
     rows: [
       {
@@ -239,25 +233,22 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
   className = '',
 }) => {
   const [selectedTournament, setSelectedTournament] = useState<TournamentKey>(initialTournament);
-  const [viewMode, setViewMode] = useState<'standings' | 'scorers' | 'assists'>('standings');
 
   const currentData = TOURNAMENT_STANDINGS[selectedTournament] || TOURNAMENT_STANDINGS.uz_superliga;
-  const currentScorers = mockTopScorers[selectedTournament] || mockTopScorers.uz_superliga || [];
-  const currentAssists = mockTopAssists[selectedTournament] || mockTopAssists.uz_superliga || [];
 
-  // Oxirgi 5 o'yin formasi doirachasi
+  // Oxirgi 5 o'yin formasi nishonchasi
   const renderFormCircle = (result: FormResult, idx: number) => {
-    let bg = 'bg-gray-700 text-gray-300';
+    let bg = 'bg-slate-700 text-slate-300';
     let label = 'D';
 
     if (result === 'W') {
-      bg = 'bg-[#10b981] text-black font-black shadow-sm shadow-[#10b981]/40';
+      bg = 'bg-[#10b981] text-black font-bold';
       label = 'G';
     } else if (result === 'D') {
-      bg = 'bg-amber-500 text-black font-black';
+      bg = 'bg-amber-500 text-black font-bold';
       label = 'D';
     } else if (result === 'L') {
-      bg = 'bg-rose-600 text-white font-black';
+      bg = 'bg-rose-600 text-white font-bold';
       label = 'M';
     }
 
@@ -265,67 +256,50 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
       <span
         key={idx}
         title={result === 'W' ? "G'alaba" : result === 'D' ? 'Durang' : "Mag'lubiyat"}
-        className={`inline-flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full text-[9px] sm:text-[10px] tracking-tight ${bg}`}
+        className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[9px] ${bg}`}
       >
         {label}
       </span>
     );
   };
 
-  // Turnir bo'yicha chiziq indikatori rangi
-  const getZoneBorderColor = (row: StandingRow, index: number, total: number) => {
-    if (row.zone === 'ucl') return 'border-l-4 border-l-blue-500';
-    if (row.zone === 'uel') return 'border-l-4 border-l-orange-500';
-    if (row.zone === 'relegation') return 'border-l-4 border-l-rose-500';
+  // Nozik zona belgisi rangi
+  const getZoneBorderClass = (row: StandingRow, index: number, total: number) => {
+    if (row.zone === 'ucl') return 'border-l-2 border-l-sky-500';
+    if (row.zone === 'uel') return 'border-l-2 border-l-amber-500';
+    if (row.zone === 'relegation') return 'border-l-2 border-l-rose-500';
 
-    if (selectedTournament === 'ucl') {
-      if (index < 8) return 'border-l-4 border-l-blue-500';
-      return 'border-l-4 border-l-transparent';
-    }
-    if (selectedTournament === 'uel') {
-      if (index < 8) return 'border-l-4 border-l-orange-500';
-      return 'border-l-4 border-l-transparent';
-    }
-    // Superliga & Ligalar:
-    if (index === 0) return 'border-l-4 border-l-[#10b981]'; // Chempion
-    if (index < 3) return 'border-l-4 border-l-blue-500'; // Xalqaro zona
-    if (index >= total - 2) return 'border-l-4 border-l-rose-500'; // Quyi liga
-    return 'border-l-4 border-l-transparent';
+    if (selectedTournament === 'ucl' && index < 8) return 'border-l-2 border-l-sky-500';
+    if (selectedTournament === 'uel' && index < 8) return 'border-l-2 border-l-amber-500';
+    if (index === 0) return 'border-l-2 border-l-[#10b981]';
+    if (index < 3) return 'border-l-2 border-l-sky-500';
+    if (index >= total - 2) return 'border-l-2 border-l-rose-500';
+    return 'border-l-2 border-l-transparent';
   };
 
   return (
     <div
-      className={`overflow-hidden rounded-2xl border ${currentData.theme.border} bg-[#0b0e14] shadow-xl transition-all ${className}`}
+      className={`overflow-hidden rounded-2xl bg-[#0d111a] border border-white/[0.06] shadow-sm transition-all ${className}`}
     >
-      {/* Sarlavha qismi (Tanlangan turnir gradienti bilan) */}
-      <div
-        className={`relative border-b border-[#1f293d] p-3.5 sm:p-4 bg-gradient-to-r ${currentData.theme.gradient}`}
-      >
+      {/* Sarlavha paneli — ortiqcha hoshiyalarsiz, toza */}
+      <div className={`p-4 ${currentData.theme.headerBg}`}>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-black/40 border border-white/10 text-white shadow-inner">
-              <Trophy className={`h-4 w-4 ${currentData.theme.accent}`} />
-            </div>
+            <Trophy className={`h-5 w-5 ${currentData.theme.accent}`} />
             <div>
-              <h2 className="text-sm sm:text-base font-extrabold text-white tracking-tight flex items-center gap-2">
+              <h2 className="text-[15px] font-bold text-white tracking-tight flex items-center gap-1.5">
                 <span>{currentData.title}</span>
-                <span className="rounded bg-black/40 px-1.5 py-0.2 text-[10px] font-black text-gray-300 border border-white/10">
+                <span className="text-xs font-normal text-slate-400">
                   {currentData.season}
                 </span>
               </h2>
-              <p className="text-[11px] text-gray-400">{currentData.subtitle}</p>
+              <p className="text-[11px] text-slate-400">{currentData.subtitle}</p>
             </div>
           </div>
-
-          <span
-            className={`hidden xs:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border ${currentData.theme.badge}`}
-          >
-            Jadval
-          </span>
         </div>
 
-        {/* Turnir tanlash selektori (Kichik Tablar) */}
-        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+        {/* Turnir tanlash navigatsiyasi — toza pill tugmachalar */}
+        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
           {[
             { id: 'uz_superliga', label: 'Superliga' },
             { id: 'ucl', label: 'UCL' },
@@ -339,10 +313,10 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
                 key={t.id}
                 type="button"
                 onClick={() => setSelectedTournament(t.id as TournamentKey)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all whitespace-nowrap ${
+                className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors whitespace-nowrap ${
                   isSelected
-                    ? 'bg-white text-black shadow-md'
-                    : 'bg-black/40 text-gray-400 hover:text-white border border-white/5'
+                    ? currentData.theme.pillActive
+                    : 'text-slate-400 hover:text-white bg-white/[0.05]'
                 }`}
               >
                 {t.label}
@@ -350,249 +324,109 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
             );
           })}
         </div>
-
-        {/* Jadval / To'purarlar / Asistentlar rejimi */}
-        <div className="mt-2.5 flex items-center gap-1 border-t border-white/10 pt-2">
-          <button
-            type="button"
-            onClick={() => setViewMode('standings')}
-            className={`flex-1 flex items-center justify-center gap-1 rounded-lg py-1 text-xs font-bold transition-all ${
-              viewMode === 'standings'
-                ? 'bg-emerald-500/20 text-[#10b981] border border-emerald-500/30'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <Trophy className="h-3 w-3" />
-            <span>Jadval</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('scorers')}
-            className={`flex-1 flex items-center justify-center gap-1 rounded-lg py-1 text-xs font-bold transition-all ${
-              viewMode === 'scorers'
-                ? 'bg-emerald-500/20 text-[#10b981] border border-emerald-500/30'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <Target className="h-3 w-3" />
-            <span>To'purarlar</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('assists')}
-            className={`flex-1 flex items-center justify-center gap-1 rounded-lg py-1 text-xs font-bold transition-all ${
-              viewMode === 'assists'
-                ? 'bg-emerald-500/20 text-[#10b981] border border-emerald-500/30'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <Award className="h-3 w-3" />
-            <span>Asistentlar</span>
-          </button>
-        </div>
       </div>
 
-      {/* 1. JADVAL TANASI (SofaScore zich tartibi) */}
-      {viewMode === 'standings' && (
-        <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-[#1f293d] bg-[#131722]/80 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-gray-400">
-                <th scope="col" className="w-9 sm:w-11 py-2 text-center">
-                  #
-                </th>
-                <th scope="col" className="min-w-[130px] sm:min-w-[170px] py-2 px-2">
-                  Jamoa
-                </th>
-                <th scope="col" className="w-8 py-2 text-center" title="O'yinlar">
-                  O'
-                </th>
-                <th scope="col" className="w-8 py-2 text-center" title="G'alaba">
-                  G'
-                </th>
-                <th scope="col" className="w-8 py-2 text-center" title="Durang">
-                  D
-                </th>
-                <th scope="col" className="w-8 py-2 text-center" title="Mag'lubiyat">
-                  M
-                </th>
-                <th scope="col" className="hidden sm:table-cell w-12 py-2 text-center" title="To'plar nisbati">
-                  T/N
-                </th>
-                <th scope="col" className="w-9 py-2 text-center" title="To'plar farqi">
-                  +/-
-                </th>
-                <th scope="col" className="w-10 py-2 text-center font-black text-white" title="Ochko">
-                  O
-                </th>
-                <th scope="col" className="hidden md:table-cell py-2 px-2 text-center min-w-[120px]" title="Oxirgi 5 o'yin formasi">
-                  Forma
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1f293d]/50 bg-[#0b0e14]">
-              {currentData.rows.map((row, idx) => {
-                const total = currentData.rows.length;
-                const borderClass = getZoneBorderColor(row, idx, total);
+      {/* Jadval tanasi (SofaScore zich tartibi) */}
+      <div className="overflow-x-auto no-scrollbar">
+        <table className="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr className="border-b border-white/[0.04] bg-[#0b0e14] text-[11px] font-semibold text-slate-400">
+              <th scope="col" className="w-8 py-2 text-center">#</th>
+              <th scope="col" className="min-w-[130px] sm:min-w-[160px] py-2 px-2">Jamoa</th>
+              <th scope="col" className="w-7 py-2 text-center" title="O'yinlar">O'</th>
+              <th scope="col" className="w-7 py-2 text-center" title="G'alaba">G'</th>
+              <th scope="col" className="w-7 py-2 text-center" title="Durang">D</th>
+              <th scope="col" className="w-7 py-2 text-center" title="Mag'lubiyat">M</th>
+              <th scope="col" className="hidden sm:table-cell w-10 py-2 text-center" title="To'plar nisbati">T/N</th>
+              <th scope="col" className="w-8 py-2 text-center" title="To'plar farqi">+/-</th>
+              <th scope="col" className="w-9 py-2 text-center font-bold text-white" title="Ochko">O</th>
+              <th scope="col" className="hidden md:table-cell py-2 px-2 text-center min-w-[110px]" title="Oxirgi 5 o'yin formasi">Forma</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/[0.03] bg-[#0b0e14]">
+            {currentData.rows.map((row, idx) => {
+              const total = currentData.rows.length;
+              const borderClass = getZoneBorderClass(row, idx, total);
 
-                return (
-                  <tr
-                    key={row.team.id}
-                    onClick={() => onTeamClick && onTeamClick(row.team.id)}
-                    className={`group transition-colors hover:bg-[#131722] cursor-pointer ${borderClass}`}
+              return (
+                <tr
+                  key={row.team.id}
+                  onClick={() => onTeamClick && onTeamClick(row.team.id)}
+                  className={`transition-colors hover:bg-[#131722]/80 cursor-pointer ${borderClass}`}
+                >
+                  {/* O'rin */}
+                  <td className="py-2 text-center text-slate-400 font-medium tabular-nums">
+                    {row.position}
+                  </td>
+
+                  {/* Jamoa logosi va nomi (ortiqcha hoshiyalarsiz) */}
+                  <td className="py-2 px-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <TeamCrest
+                        name={row.team.name}
+                        logoUrl={row.team.logo}
+                        crestDetails={row.team.crestDetails}
+                        size="xs"
+                      />
+                      <span className="truncate text-slate-200 font-medium tracking-tight">
+                        {row.team.shortName || row.team.name}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Ko'rsatkichlar */}
+                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.played}</td>
+                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.won}</td>
+                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.drawn}</td>
+                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.lost}</td>
+
+                  <td className="hidden sm:table-cell py-2 text-center text-slate-400 tabular-nums text-[11px]">
+                    {row.gf}-{row.ga}
+                  </td>
+
+                  <td
+                    className={`py-2 text-center tabular-nums font-medium ${
+                      row.gd > 0
+                        ? 'text-emerald-400'
+                        : row.gd < 0
+                        ? 'text-rose-400'
+                        : 'text-slate-400'
+                    }`}
                   >
-                    <td className="py-2.5 text-center font-mono font-bold text-gray-400 group-hover:text-white">
-                      {row.position}
-                    </td>
-
-                    <td className="py-2.5 px-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <TeamCrest
-                          name={row.team.name}
-                          logoUrl={row.team.logo}
-                          crestDetails={row.team.crestDetails}
-                          size="xs"
-                        />
-                        <span className="truncate font-semibold text-gray-200 group-hover:text-white group-hover:underline">
-                          {row.team.shortName || row.team.name}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="py-2.5 text-center text-gray-400 font-mono">{row.played}</td>
-                    <td className="py-2.5 text-center text-gray-400 font-mono">{row.won}</td>
-                    <td className="py-2.5 text-center text-gray-400 font-mono">{row.drawn}</td>
-                    <td className="py-2.5 text-center text-gray-400 font-mono">{row.lost}</td>
-                    <td className="hidden sm:table-cell py-2.5 text-center text-gray-400 font-mono text-[11px]">
-                      {row.gf}-{row.ga}
-                    </td>
-                    <td
-                      className={`py-2.5 text-center font-mono font-semibold ${
-                        row.gd > 0
-                          ? 'text-emerald-400'
-                          : row.gd < 0
-                          ? 'text-rose-400'
-                          : 'text-gray-400'
-                      }`}
-                    >
-                      {row.gd > 0 ? `+${row.gd}` : row.gd}
-                    </td>
-                    <td className="py-2.5 text-center font-black text-white font-mono text-sm bg-white/[0.02]">
-                      {row.points}
-                    </td>
-                    <td className="hidden md:table-cell py-2.5 px-2 text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        {row.form && row.form.map((res, i) => renderFormCircle(res, i))}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* 2. TO'PURARLAR RO'YXATI */}
-      {viewMode === 'scorers' && (
-        <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-[#1f293d] bg-[#131722]/80 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-gray-400">
-                <th scope="col" className="w-9 py-2 text-center">#</th>
-                <th scope="col" className="py-2 px-2">Futbolchi</th>
-                <th scope="col" className="py-2 px-2">Jamoa</th>
-                <th scope="col" className="w-10 py-2 text-center" title="O'yinlar">O'</th>
-                <th scope="col" className="w-10 py-2 text-center" title="Penaltilar">Pen</th>
-                <th scope="col" className="w-12 py-2 text-center font-black text-[#10b981]" title="Gollar">G</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1f293d]/50 bg-[#0b0e14]">
-              {currentScorers.map((player) => (
-                <tr key={player.name} className="hover:bg-[#131722] transition-colors">
-                  <td className="py-2.5 text-center font-mono font-bold text-gray-400">
-                    {player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : player.rank}
+                    {row.gd > 0 ? `+${row.gd}` : row.gd}
                   </td>
-                  <td className="py-2.5 px-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      {player.countryFlag && <span className="text-sm shrink-0">{player.countryFlag}</span>}
-                      <span className="font-bold text-white truncate">{player.name}</span>
+
+                  {/* Ochko */}
+                  <td className="py-2 text-center font-bold text-white tabular-nums">
+                    {row.points}
+                  </td>
+
+                  {/* Oxirgi 5 o'yin formasi */}
+                  <td className="hidden md:table-cell py-2 px-2 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      {row.form && row.form.map((res, i) => renderFormCircle(res, i))}
                     </div>
-                  </td>
-                  <td className="py-2.5 px-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <TeamCrest name={player.team} logoUrl={player.teamLogo} size="xs" />
-                      <span className="text-gray-300 truncate">{player.team}</span>
-                    </div>
-                  </td>
-                  <td className="py-2.5 text-center font-mono text-gray-400">{player.matches}</td>
-                  <td className="py-2.5 text-center font-mono text-gray-500">{player.penalties ?? 0}</td>
-                  <td className="py-2.5 text-center font-mono font-black text-sm text-[#10b981] bg-emerald-500/5">
-                    {player.goals}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-      {/* 3. ASISTENTLAR RO'YXATI */}
-      {viewMode === 'assists' && (
-        <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr className="border-b border-[#1f293d] bg-[#131722]/80 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-gray-400">
-                <th scope="col" className="w-9 py-2 text-center">#</th>
-                <th scope="col" className="py-2 px-2">Futbolchi</th>
-                <th scope="col" className="py-2 px-2">Jamoa</th>
-                <th scope="col" className="w-10 py-2 text-center" title="O'yinlar">O'</th>
-                <th scope="col" className="w-12 py-2 text-center font-black text-[#38bdf8]" title="Golli uzatmalar">A</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1f293d]/50 bg-[#0b0e14]">
-              {currentAssists.map((player) => (
-                <tr key={player.name} className="hover:bg-[#131722] transition-colors">
-                  <td className="py-2.5 text-center font-mono font-bold text-gray-400">
-                    {player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : player.rank}
-                  </td>
-                  <td className="py-2.5 px-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      {player.countryFlag && <span className="text-sm shrink-0">{player.countryFlag}</span>}
-                      <span className="font-bold text-white truncate">{player.name}</span>
-                    </div>
-                  </td>
-                  <td className="py-2.5 px-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <TeamCrest name={player.team} logoUrl={player.teamLogo} size="xs" />
-                      <span className="text-gray-300 truncate">{player.team}</span>
-                    </div>
-                  </td>
-                  <td className="py-2.5 text-center font-mono text-gray-400">{player.matches}</td>
-                  <td className="py-2.5 text-center font-mono font-black text-sm text-[#38bdf8] bg-sky-500/5">
-                    {player.assists}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Zonalarning tushuntirish paneli */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#1f293d] bg-[#0f131c] px-3.5 py-2 text-[10px] text-gray-400">
+      {/* Zonalarning qisqa izohi */}
+      <div className="flex items-center justify-between border-t border-white/[0.04] bg-[#0d111a] px-3.5 py-2 text-[10px] text-slate-400">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#10b981]" /> OChL / Chempion
+            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" /> Chempion / OChL
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-blue-500" /> UCL / Xalqaro
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-500" /> UCL / Xalqaro
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-rose-500" /> Quyi liga
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-500" /> Quyi liga
           </span>
         </div>
-        <span className="text-gray-500">Jonli yangilanish</span>
       </div>
     </div>
   );

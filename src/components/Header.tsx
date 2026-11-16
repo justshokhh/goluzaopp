@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Flame, Star, Trophy, X, Radio } from 'lucide-react';
+import { Search, Trophy, X, Radio, Star } from 'lucide-react';
 
 export type FilterType = 'all' | 'live' | 'favorites';
 
@@ -21,70 +21,62 @@ export const Header: React.FC<HeaderProps> = ({
   favoritesCount = 0,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#1f293d] bg-[#0b0e14]/95 backdrop-blur-md transition-colors">
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-        {/* Yuqori qator: Logotip, Qidiruv va Jonli indikator */}
-        <div className="flex h-16 items-center justify-between gap-3 sm:gap-6">
-          {/* UzScore Logotipi */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-[#10b981] shadow-lg shadow-emerald-500/20">
-              <span className="text-xl font-black text-[#0b0e14] tracking-tighter">Uz</span>
-              <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#131722] border border-emerald-500/40">
-                <span className="h-2 w-2 rounded-full bg-[#10b981] animate-ping" />
-              </div>
+    <header className="sticky top-0 z-40 w-full bg-[#0b0e14]/90 backdrop-blur-xl border-b border-white/[0.05] transition-colors">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Yuqori qator: Logotip, Qidiruv va Jonli holat */}
+        <div className="flex h-14 items-center justify-between gap-4 sm:gap-6">
+          {/* UzScore Logotipi — ortiqcha qalin ramkalarsiz, zamonaviy Apple uslubida */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-400 to-[#10b981] text-[#0b0e14] font-black text-sm tracking-tighter shadow-sm">
+              Uz
             </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xl font-black tracking-tight text-white sm:text-2xl">
-                  Uz<span className="text-[#10b981]">Score</span>
-                </span>
-                <span className="hidden sm:inline-flex items-center rounded-md bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-black text-[#10b981] border border-emerald-500/20 uppercase tracking-wider">
-                  Pro
-                </span>
-              </div>
-              <span className="hidden text-[11px] font-medium text-gray-400 sm:block -mt-1">
-                Apple Sports & SofaScore Standarti
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-lg font-bold tracking-tight text-white">
+                Uz<span className="text-[#10b981]">Score</span>
+              </span>
+              <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                Live
               </span>
             </div>
           </div>
 
-          {/* Qidiruv maydoni */}
+          {/* Qidiruv maydoni — toza, minimal va qulay */}
           <div className="flex-1 max-w-md">
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Search className="h-4 w-4 text-gray-400" />
+                <Search className="h-4 w-4 text-slate-400" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Jamoa yoki turnir nomini qidiring..."
-                className="w-full rounded-xl border border-[#1f293d] bg-[#131722] py-2 pl-9 pr-9 text-xs sm:text-sm text-gray-200 placeholder-gray-500 transition-all focus:border-[#10b981] focus:bg-[#0b0e14] focus:outline-none focus:ring-1 focus:ring-[#10b981]"
+                placeholder="Jamoa yoki turnir qidirish..."
+                className="w-full rounded-xl bg-[#131722]/80 border border-white/[0.06] py-1.5 pl-9 pr-8 text-xs sm:text-[13px] text-slate-100 placeholder-slate-500 transition-colors focus:border-[#10b981]/50 focus:bg-[#131722] focus:outline-none"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => onSearchChange('')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-white"
+                  className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 hover:text-white"
                   title="Tozalash"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
           </div>
 
           {/* Jonli indikator (Desktop) */}
-          <div className="hidden md:flex items-center gap-2">
-            <div className="flex items-center gap-2 rounded-xl bg-[#131722] border border-[#1f293d] px-3 py-1.5 shadow-sm">
+          <div className="hidden md:flex items-center gap-2 text-xs">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#131722] text-slate-300">
               <Radio
-                className={`h-4 w-4 ${
-                  liveCount > 0 ? 'text-[#10b981] animate-pulse' : 'text-gray-500'
+                className={`h-3.5 w-3.5 ${
+                  liveCount > 0 ? 'text-[#10b981] animate-pulse' : 'text-slate-500'
                 }`}
               />
-              <span className="text-xs font-semibold text-gray-300">
-                Jonli efirda:{' '}
-                <span className={`font-black ${liveCount > 0 ? 'text-[#10b981]' : 'text-gray-400'}`}>
+              <span className="font-medium text-slate-400">
+                Jonli:{' '}
+                <span className={`font-semibold ${liveCount > 0 ? 'text-[#10b981]' : 'text-slate-400'}`}>
                   {liveCount} ta o'yin
                 </span>
               </span>
@@ -92,67 +84,60 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Pastki qator: Filtr tugmalari (SofaScore tab bar uslubida) */}
-        <div className="flex items-center justify-between border-t border-[#1f293d]/60 py-2.5 overflow-x-auto no-scrollbar gap-2">
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Pastki qator: Filtr tugmalari (Toza tabs) */}
+        <div className="flex items-center justify-between border-t border-white/[0.04] py-2 overflow-x-auto no-scrollbar gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             {/* Barchasi */}
             <button
               type="button"
               onClick={() => onFilterChange('all')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition-all ${
                 activeFilter === 'all'
-                  ? 'bg-emerald-500/15 text-[#10b981] border border-emerald-500/30 shadow-sm'
-                  : 'text-gray-400 hover:bg-[#131722] hover:text-gray-200'
+                  ? 'bg-white/10 text-white font-semibold'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
               }`}
             >
               <Trophy className="h-3.5 w-3.5" />
-              <span>Barcha o'yinlar</span>
+              <span>Barchasi</span>
             </button>
 
             {/* Jonli (LIVE) */}
             <button
               type="button"
               onClick={() => onFilterChange('live')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition-all ${
                 activeFilter === 'live'
-                  ? 'bg-emerald-500/20 text-[#10b981] border border-emerald-500/40 shadow-sm shadow-emerald-500/20'
-                  : 'text-gray-400 hover:bg-[#131722] hover:text-gray-200'
+                  ? 'bg-emerald-500/15 text-[#10b981] font-semibold'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
               }`}
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10b981] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10b981]" />
-              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
               <span>Jonli</span>
               {liveCount > 0 && (
-                <span className="ml-0.5 rounded-full bg-[#10b981] px-1.5 py-0.2 text-[10px] font-black text-black">
-                  {liveCount}
+                <span className="ml-0.5 text-[11px] font-bold text-[#10b981]">
+                  ({liveCount})
                 </span>
               )}
             </button>
 
-            {/* Sevimlilar (Favorites) */}
+            {/* Sevimlilar */}
             <button
               type="button"
               onClick={() => onFilterChange('favorites')}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-medium transition-all ${
                 activeFilter === 'favorites'
-                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30 shadow-sm'
-                  : 'text-gray-400 hover:bg-[#131722] hover:text-gray-200'
+                  ? 'bg-amber-400/15 text-amber-300 font-semibold'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
               }`}
             >
               <Star className="h-3.5 w-3.5" />
               <span>Sevimlilar</span>
               {favoritesCount > 0 && (
-                <span className="ml-0.5 rounded-full bg-amber-400 px-1.5 py-0.2 text-[10px] font-black text-black">
-                  {favoritesCount}
+                <span className="ml-0.5 text-[11px] font-bold text-amber-300">
+                  ({favoritesCount})
                 </span>
               )}
             </button>
-          </div>
-
-          <div className="hidden lg:flex items-center gap-2 text-[11px] text-gray-500 font-semibold">
-            <Flame className="w-3.5 h-3.5 text-orange-400" /> Superliga 19-tur davom etmoqda
           </div>
         </div>
       </div>

@@ -5,7 +5,6 @@ import {
   Activity,
   BarChart2,
   Users,
-  GitCommit,
   Calendar,
   MapPin,
   UserCheck,
@@ -40,7 +39,6 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('summary');
 
-  // ESC tugmasi orqali yopish
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -62,25 +60,24 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
   const homeScore = match.score?.home ?? match.homeTeam.score ?? 0;
   const awayScore = match.score?.away ?? match.awayTeam.score ?? 0;
 
-  // Turnir bo'yicha vizual fon
+  // Turnir bo'yicha tabiiy sarlavha foni
   const theme = match.league?.theme || match.tournamentTheme || 'uz_superliga';
   const getHeaderGradient = () => {
     switch (theme) {
       case 'ucl':
-        return 'from-[#0a1128] via-[#0e1b4d] to-[#090d16] border-[#1e3a8a]/60';
+        return 'bg-gradient-to-r from-[#081026] via-[#0c1a40] to-[#080d1a]';
       case 'uel':
-        return 'from-[#1a0f07] via-[#2b1405] to-[#0d0d0d] border-[#c2410c]/60';
+        return 'bg-gradient-to-r from-[#140b06] via-[#241207] to-[#0a0807]';
       case 'premier_league':
-        return 'from-[#1e072b] via-[#2e0b40] to-[#0d0a12] border-[#701a75]/60';
+        return 'bg-gradient-to-r from-[#170522] via-[#250937] to-[#0d0514]';
       case 'laliga':
-        return 'from-[#26090c] via-[#380d12] to-[#0f0a0b] border-[#991b1b]/60';
+        return 'bg-gradient-to-r from-[#1c0507] via-[#2d090d] to-[#0e0405]';
       case 'uz_superliga':
       default:
-        return 'from-[#06241c] via-[#093329] to-[#0a0f14] border-[#065f46]/60';
+        return 'bg-gradient-to-r from-[#031711] via-[#06261c] to-[#06120e]';
     }
   };
 
-  // Statistikalarni olish (match.stats yoki mockMatchStats dan)
   const stats: MatchStats =
     match.stats ||
     mockMatchStats[match.id] || {
@@ -99,13 +96,13 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
       passAccuracyPct: { home: 84, away: 78 },
     };
 
-  // SofaScore reytingi rangini aniqlash
+  // SofaScore reytingi rangi
   const getRatingBadgeColor = (rating?: number) => {
-    if (!rating) return 'bg-gray-700 text-gray-300';
-    if (rating >= 8.0) return 'bg-blue-600 text-white font-extrabold shadow-sm shadow-blue-500/50';
-    if (rating >= 7.0) return 'bg-emerald-600 text-white font-extrabold shadow-sm shadow-emerald-500/50';
-    if (rating >= 6.0) return 'bg-amber-500 text-black font-extrabold';
-    return 'bg-rose-600 text-white font-extrabold';
+    if (!rating) return 'bg-slate-700 text-slate-300';
+    if (rating >= 8.0) return 'bg-sky-600 text-white font-bold';
+    if (rating >= 7.0) return 'bg-emerald-600 text-white font-bold';
+    if (rating >= 6.0) return 'bg-amber-500 text-black font-bold';
+    return 'bg-rose-600 text-white font-bold';
   };
 
   // Voqealar ikonkasi
@@ -113,44 +110,20 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
     switch (event.type) {
       case 'GOAL':
       case 'PENALTY':
-        return (
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs shadow-sm">
-            ⚽
-          </span>
-        );
+        return <span className="text-sm">⚽</span>;
       case 'YELLOW':
       case 'YELLOW_CARD':
-        return (
-          <span
-            title="Sariq kartochka"
-            className="inline-block h-4 w-3 bg-amber-400 rounded-[1.5px] shadow-sm shadow-amber-400/40"
-          />
-        );
+        return <span className="inline-block h-3.5 w-2.5 bg-amber-400 rounded-[1px]" />;
       case 'RED':
       case 'RED_CARD':
-        return (
-          <span
-            title="Qizil kartochka"
-            className="inline-block h-4 w-3 bg-rose-600 rounded-[1.5px] shadow-sm shadow-rose-600/40"
-          />
-        );
+        return <span className="inline-block h-3.5 w-2.5 bg-rose-600 rounded-[1px]" />;
       case 'SUB':
       case 'SUBSTITUTION':
-        return (
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/40 text-[10px]">
-            🔄
-          </span>
-        );
+        return <span className="text-xs text-sky-400">🔄</span>;
       case 'VAR':
-        return (
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/40 text-[10px]">
-            <Tv className="w-3 h-3" />
-          </span>
-        );
+        return <Tv className="w-3.5 h-3.5 text-purple-400" />;
       default:
-        return (
-          <span className="h-2 w-2 rounded-full bg-gray-400" />
-        );
+        return <span className="h-2 w-2 rounded-full bg-slate-400" />;
     }
   };
 
@@ -172,22 +145,22 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
     const isAwayBetter = higherIsBetter ? awayVal > homeVal : awayVal < homeVal;
 
     return (
-      <div className="space-y-1.5 py-1.5">
+      <div className="space-y-1.5 py-1">
         <div className="flex items-center justify-between text-xs">
           <span
-            className={`w-14 text-left font-mono font-bold ${
-              isHomeBetter ? 'text-[#10b981] font-black text-sm' : 'text-gray-300'
+            className={`w-12 text-left font-semibold tabular-nums ${
+              isHomeBetter ? 'text-[#10b981] font-bold text-[13px]' : 'text-slate-400'
             }`}
           >
             {homeVal}
             {isPercentage ? '%' : ''}
           </span>
-          <span className="flex-1 text-center font-medium text-gray-400 text-[11px] uppercase tracking-wider">
+          <span className="flex-1 text-center font-medium text-slate-400 text-[11px]">
             {label}
           </span>
           <span
-            className={`w-14 text-right font-mono font-bold ${
-              isAwayBetter ? 'text-[#10b981] font-black text-sm' : 'text-gray-300'
+            className={`w-12 text-right font-semibold tabular-nums ${
+              isAwayBetter ? 'text-[#10b981] font-bold text-[13px]' : 'text-slate-400'
             }`}
           >
             {awayVal}
@@ -195,23 +168,21 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
           </span>
         </div>
 
-        {/* Ikki tomonlama markazdan yoki ikki qirradan chiquvchi progress bar */}
-        <div className="flex h-2 w-full gap-1 overflow-hidden rounded-full bg-[#0b0e14]">
-          {/* Mezbon bar */}
-          <div className="flex w-1/2 justify-end bg-gray-800/40 rounded-l-full overflow-hidden">
+        {/* Progress bar — nozik va silliq */}
+        <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-[#0b0e14]">
+          <div className="flex w-1/2 justify-end bg-slate-800/50 rounded-l-full overflow-hidden">
             <div
               style={{ width: `${homePercent}%` }}
-              className={`h-full transition-all duration-500 rounded-l-full ${
-                isHomeBetter ? 'bg-[#10b981]' : 'bg-gray-600'
+              className={`h-full transition-all duration-300 rounded-l-full ${
+                isHomeBetter ? 'bg-[#10b981]' : 'bg-slate-600'
               }`}
             />
           </div>
-          {/* Mehmon bar */}
-          <div className="flex w-1/2 justify-start bg-gray-800/40 rounded-r-full overflow-hidden">
+          <div className="flex w-1/2 justify-start bg-slate-800/50 rounded-r-full overflow-hidden">
             <div
               style={{ width: `${awayPercent}%` }}
-              className={`h-full transition-all duration-500 rounded-r-full ${
-                isAwayBetter ? 'bg-[#10b981]' : 'bg-gray-600'
+              className={`h-full transition-all duration-300 rounded-r-full ${
+                isAwayBetter ? 'bg-[#10b981]' : 'bg-slate-600'
               }`}
             />
           </div>
@@ -220,13 +191,12 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
     );
   };
 
-  // Tarkiblar uchun maydonda futbolchilarni joylashtirish
+  // Futbol maydonida o'yinchilarni joylashtirish
   const renderFieldFormation = (
     players: PlayerLineup[],
     teamType: 'home' | 'away',
     _teamName?: string
   ) => {
-    // Pozitsiyalar bo'yicha guruhlash: GK, DF, MF, FW
     const gk = players.filter((p) => p.pos === 'GK');
     const df = players.filter((p) => p.pos === 'DF');
     const mf = players.filter((p) => p.pos === 'MF');
@@ -242,32 +212,18 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
               <div
                 key={player.number}
                 className="group relative flex flex-col items-center cursor-pointer"
-                title={`${player.name} #${player.number} (${player.pos}) ${player.country ? `• ${player.country}` : ''}`}
               >
-                {/* Futbolchi doirasi yoki rasmi */}
+                {/* Futbolchi doirasi — ortiqcha qalin ramkalarsiz */}
                 <div
-                  className={`relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 shadow-lg transition-transform group-hover:scale-115 ${
-                    teamType === 'home'
-                      ? 'bg-blue-900/90 border-blue-400 text-white'
-                      : 'bg-emerald-950/90 border-emerald-400 text-white'
+                  className={`relative flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-white text-[11px] font-bold shadow-sm transition-transform group-hover:scale-110 ${
+                    teamType === 'home' ? 'bg-sky-900 text-sky-100' : 'bg-emerald-950 text-emerald-100'
                   }`}
                 >
-                  {player.photo ? (
-                    <img
-                      src={player.photo}
-                      alt={player.name}
-                      className="h-full w-full object-cover rounded-full"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
-                    />
-                  ) : null}
-                  <span className="text-[11px] sm:text-xs font-black">{player.number}</span>
+                  <span>{player.number}</span>
 
-                  {/* SofaScore Reytingi */}
                   {player.rating && (
                     <span
-                      className={`absolute -bottom-1 -right-1 px-1 py-0.2 rounded text-[9px] font-black tracking-tight ${getRatingBadgeColor(
+                      className={`absolute -bottom-1 -right-1 px-1 py-0.2 rounded text-[8px] font-bold ${getRatingBadgeColor(
                         player.rating
                       )}`}
                     >
@@ -276,14 +232,8 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
                   )}
                 </div>
 
-                {/* Futbolchi familiyasi va bayrog'i */}
-                <span className="mt-1 flex items-center gap-0.5 max-w-[85px] truncate text-[10px] font-bold text-gray-100 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] bg-black/60 px-1.5 py-0.2 rounded-full border border-white/10">
-                  {player.countryFlag && (
-                    <span className="text-[10px] shrink-0" title={player.country}>
-                      {player.countryFlag}
-                    </span>
-                  )}
-                  <span className="truncate">{player.name.split(' ').slice(-1)[0]}</span>
+                <span className="mt-1 max-w-[65px] truncate text-[10px] font-medium text-slate-100 drop-shadow">
+                  {player.name.split(' ').slice(-1)[0]}
                 </span>
               </div>
             ))}
@@ -299,47 +249,42 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-2xl border border-[#1f293d] bg-[#131722] shadow-2xl overflow-hidden"
+        className="relative w-full max-w-3xl max-h-[92vh] flex flex-col rounded-2xl bg-[#0d111a] border border-white/[0.08] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ================================================================= */}
-        {/* 1. TOP HEADER: Turnir brendi, Jamoalar, Hisob va Yopish */}
+        {/* 1. TOP HEADER: Turnir, Jamoalar va Hisob */}
         {/* ================================================================= */}
-        <div
-          className={`relative shrink-0 border-b p-4 sm:p-6 bg-gradient-to-br ${getHeaderGradient()}`}
-        >
-          {/* Yuqori kichik qator: Turnir nomi va Yopish tugmasi */}
-          <div className="flex items-center justify-between text-xs text-gray-300 mb-3">
-            <div className="flex items-center gap-2 font-bold tracking-tight">
-              <Trophy className="h-4 w-4 text-[#10b981]" />
+        <div className={`p-4 sm:p-5 ${getHeaderGradient()} border-b border-white/[0.06]`}>
+          {/* Yuqori qator: Liga va Yopish */}
+          <div className="flex items-center justify-between text-xs text-slate-300 mb-2">
+            <div className="flex items-center gap-1.5 font-medium">
+              <Trophy className="h-3.5 w-3.5 text-[#10b981]" />
               <span>{match.league?.name || match.tournamentName}</span>
               {match.league?.round && (
-                <>
-                  <span className="text-gray-500">•</span>
-                  <span className="text-gray-400">{match.league.round}</span>
-                </>
+                <span className="text-slate-400">• {match.league.round}</span>
               )}
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-xl bg-black/40 text-gray-400 hover:text-white hover:bg-black/60 border border-white/10 transition-colors"
-              title="Yopish (Esc)"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:text-white transition-colors"
+              title="Yopish"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Markaziy Hisob va Jamoalar Bloki (Apple Sports estetikasida) */}
+          {/* Markaziy Hisob va Jamoalar (ortiqcha hoshiyalarsiz) */}
           <div className="grid grid-cols-7 items-center gap-2 text-center py-2">
-            {/* Mezbon jamoa (3 ustun) */}
-            <div className="col-span-3 flex flex-col items-center sm:flex-row sm:justify-end sm:gap-4">
+            {/* Mezbon */}
+            <div className="col-span-3 flex flex-col items-center sm:flex-row sm:justify-end sm:gap-3">
               <div className="order-2 sm:order-1 sm:text-right mt-1 sm:mt-0">
-                <h3 className="text-sm sm:text-lg font-black text-white tracking-tight">
+                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
                   {match.homeTeam.name}
                 </h3>
-                <span className="text-[11px] font-medium text-gray-400">Mezbon</span>
+                <span className="text-[11px] text-slate-400">Mezbon</span>
               </div>
               <div className="order-1 sm:order-2">
                 <TeamCrest
@@ -351,38 +296,38 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
               </div>
             </div>
 
-            {/* Markaziy Hisob va Daqiqa (1 ustun) */}
+            {/* Hisob */}
             <div className="col-span-1 flex flex-col items-center justify-center">
-              <div className="flex items-center gap-1 sm:gap-2 text-2xl sm:text-4xl font-black text-white font-mono">
+              <div className="flex items-center gap-1.5 text-2xl sm:text-3xl font-extrabold text-white tabular-nums tracking-tight">
                 <span>{homeScore}</span>
-                <span className="text-gray-500 text-xl sm:text-2xl">:</span>
+                <span className="text-slate-500">:</span>
                 <span>{awayScore}</span>
               </div>
 
               {isLive ? (
-                <div className="mt-1 flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[11px] font-black text-[#10b981] border border-emerald-500/40">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#10b981] animate-ping" />
+                <div className="mt-1 flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-[#10b981]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#10b981] animate-pulse" />
                   <span>{match.minute}' Jonli</span>
                 </div>
               ) : isFinished ? (
-                <span className="mt-1 rounded bg-gray-800 px-2 py-0.5 text-[11px] font-black text-gray-300">
+                <span className="mt-1 text-[11px] font-medium text-slate-400">
                   Yakunlandi
                 </span>
               ) : (
-                <span className="mt-1 rounded bg-gray-800 px-2 py-0.5 text-[11px] font-bold text-gray-400">
+                <span className="mt-1 text-[11px] font-medium text-slate-400">
                   {match.startTime || '21:00'}
                 </span>
               )}
 
               {match.htScore && (
-                <span className="text-[10px] text-gray-400 mt-0.5 font-medium">
+                <span className="text-[10px] text-slate-500 mt-0.5 tabular-nums">
                   HT {match.htScore.home}-{match.htScore.away}
                 </span>
               )}
             </div>
 
-            {/* Mehmon jamoa (3 ustun) */}
-            <div className="col-span-3 flex flex-col items-center sm:flex-row sm:justify-start sm:gap-4">
+            {/* Mehmon */}
+            <div className="col-span-3 flex flex-col items-center sm:flex-row sm:justify-start sm:gap-3">
               <div>
                 <TeamCrest
                   name={match.awayTeam.name}
@@ -392,167 +337,150 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
                 />
               </div>
               <div className="sm:text-left mt-1 sm:mt-0">
-                <h3 className="text-sm sm:text-lg font-black text-white tracking-tight">
+                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">
                   {match.awayTeam.name}
                 </h3>
-                <span className="text-[11px] font-medium text-gray-400">Mehmon</span>
+                <span className="text-[11px] text-slate-400">Mehmon</span>
               </div>
             </div>
           </div>
 
-          {/* O'yin stadioni va bosh hakam axboroti */}
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-400 border-t border-white/10 pt-2.5">
+          {/* Stadion va hakam */}
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400 border-t border-white/[0.05] pt-2">
             {match.stadium && (
               <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-gray-500" /> {match.stadium}
+                <MapPin className="w-3.5 h-3.5 text-slate-500" /> {match.stadium}
               </span>
             )}
             {match.referee && (
               <span className="flex items-center gap-1">
-                <UserCheck className="w-3.5 h-3.5 text-gray-500" /> Hakam: {match.referee}
-              </span>
-            )}
-            {match.attendance && (
-              <span className="flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-gray-500" /> {match.attendance.toLocaleString()} muxlis
+                <UserCheck className="w-3.5 h-3.5 text-slate-500" /> {match.referee}
               </span>
             )}
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* 2. TABLAR NAVIGATSIYASI (SofaScore Tab Bar) */}
+        {/* 2. TABLAR NAVIGATSIYASI */}
         {/* ================================================================= */}
-        <div className="flex items-center border-b border-[#1f293d] bg-[#0f131c] px-4">
+        <div className="flex items-center border-b border-white/[0.05] bg-[#0b0e14] px-4">
           <button
             type="button"
             onClick={() => setActiveTab('summary')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
               activeTab === 'summary'
-                ? 'border-[#10b981] text-[#10b981]'
-                : 'border-transparent text-gray-400 hover:text-gray-200'
+                ? 'border-[#10b981] text-[#10b981] font-semibold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Activity className="h-4 w-4" />
+            <Activity className="h-3.5 w-3.5" />
             <span>Sharh</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('stats')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
               activeTab === 'stats'
-                ? 'border-[#10b981] text-[#10b981]'
-                : 'border-transparent text-gray-400 hover:text-gray-200'
+                ? 'border-[#10b981] text-[#10b981] font-semibold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            <BarChart2 className="h-4 w-4" />
+            <BarChart2 className="h-3.5 w-3.5" />
             <span>Statistika</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('lineups')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
               activeTab === 'lineups'
-                ? 'border-[#10b981] text-[#10b981]'
-                : 'border-transparent text-gray-400 hover:text-gray-200'
+                ? 'border-[#10b981] text-[#10b981] font-semibold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Users className="h-4 w-4" />
+            <Users className="h-3.5 w-3.5" />
             <span>Tarkiblar</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('h2h')}
-            className={`flex items-center gap-2 border-b-2 px-4 py-3 text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
               activeTab === 'h2h'
-                ? 'border-[#10b981] text-[#10b981]'
-                : 'border-transparent text-gray-400 hover:text-gray-200'
+                ? 'border-[#10b981] text-[#10b981] font-semibold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
-            <TrendingUp className="h-4 w-4" />
+            <TrendingUp className="h-3.5 w-3.5" />
             <span>H2H & Jadval</span>
           </button>
         </div>
 
         {/* ================================================================= */}
-        {/* 3. ASOSIY TAB MAZMUNI (Scrollable) */}
+        {/* 3. ASOSIY TAB MAZMUNI */}
         {/* ================================================================= */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-          {/* TAB 1: SHARH (SUMMARY) — Vertikal vaqt shkalasi */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+          {/* TAB 1: SHARH (SUMMARY) */}
           {activeTab === 'summary' && (
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
-                <GitCommit className="w-4 h-4 text-[#10b981]" /> O'yin Voqealari Shkalasi
-              </h4>
-
+            <div className="space-y-3">
               {match.events && match.events.length > 0 ? (
-                <div className="relative border-l-2 border-[#1f293d] ml-4 sm:ml-6 pl-4 sm:pl-6 space-y-4 py-2">
+                <div className="relative border-l border-white/[0.08] ml-4 pl-4 space-y-3 py-1">
                   {match.events.map((event) => {
                     const isHome = event.team === 'home';
                     return (
                       <div
                         key={event.id}
-                        className="relative flex items-start gap-3 text-xs transition-all hover:bg-white/[0.02] p-2 rounded-xl"
+                        className="relative flex items-center justify-between text-xs py-1"
                       >
-                        {/* Shkaladagi nuqta (Daqiqa doirasi) */}
-                        <div className="absolute -left-[27px] sm:-left-[35px] flex h-7 w-7 items-center justify-center rounded-full bg-[#131722] border-2 border-[#10b981] text-[10px] font-black text-[#10b981] shadow-md">
+                        {/* Shkaladagi daqiqa */}
+                        <div className="absolute -left-[23px] flex h-5 w-5 items-center justify-center rounded-full bg-[#0d111a] border border-[#10b981] text-[9px] font-bold text-[#10b981]">
                           {event.minute}'
                         </div>
 
-                        {/* Voqea kartochkasi */}
-                        <div className="flex-1 flex items-center justify-between rounded-xl bg-[#0b0e14] border border-[#1f293d] p-3 shadow-sm">
-                          <div className="flex items-center gap-3">
-                            {renderEventIcon(event)}
-                            <div>
-                              <div className="font-bold text-white text-sm flex items-center gap-1.5">
-                                <span>{event.player}</span>
-                                <span className="text-[10px] font-semibold text-gray-500 uppercase">
-                                  ({isHome ? match.homeTeam.name : match.awayTeam.name})
-                                </span>
-                              </div>
-                              {event.assistPlayer && (
-                                <p className="text-[11px] text-gray-400 flex items-center gap-1 mt-0.5">
-                                  <CornerDownRight className="w-3 h-3 text-[#10b981]" />
-                                  Assist: <span className="text-gray-200">{event.assistPlayer}</span>
-                                </p>
-                              )}
-                              {event.detail && (
-                                <p className="text-[11px] text-gray-500 italic mt-0.5">
-                                  {event.detail}
-                                </p>
-                              )}
-                            </div>
+                        <div className="flex items-center gap-2.5 pl-2">
+                          {renderEventIcon(event)}
+                          <div>
+                            <span className="font-semibold text-white">
+                              {event.player}
+                            </span>
+                            <span className="text-[11px] text-slate-400 ml-1.5">
+                              ({isHome ? match.homeTeam.name : match.awayTeam.name})
+                            </span>
+                            {event.assistPlayer && (
+                              <p className="text-[11px] text-slate-400 flex items-center gap-1">
+                                <CornerDownRight className="w-3 h-3 text-[#10b981]" />
+                                {event.assistPlayer}
+                              </p>
+                            )}
                           </div>
-
-                          <span className="rounded bg-[#131722] px-2 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider border border-white/5">
-                            {event.type}
-                          </span>
                         </div>
+
+                        <span className="text-[10px] uppercase font-medium text-slate-400">
+                          {event.type}
+                        </span>
                       </div>
                     );
                   })}
                 </div>
               ) : (
-                <div className="rounded-xl border border-[#1f293d] bg-[#0b0e14] p-8 text-center text-gray-500 text-xs">
-                  Ushbu o'yin uchun voqealar hali qayd etilmagan.
+                <div className="py-6 text-center text-slate-500 text-xs">
+                  Voqealar hali qayd etilmagan.
                 </div>
               )}
             </div>
           )}
 
-          {/* TAB 2: STATISTIKA (STATS) — SofaScore gorizontal progress-barlar */}
+          {/* TAB 2: STATISTIKA */}
           {activeTab === 'stats' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-[#1f293d] pb-2 text-xs font-bold text-gray-400">
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between pb-1 text-xs font-semibold text-slate-400">
                 <span className="text-white">{match.homeTeam.name}</span>
-                <span className="uppercase tracking-wider">Umumiy ko'rsatkichlar</span>
+                <span className="text-[11px]">Ko'rsatkichlar</span>
                 <span className="text-white">{match.awayTeam.name}</span>
               </div>
 
-              <div className="rounded-2xl border border-[#1f293d] bg-[#0b0e14] p-4 sm:p-5 space-y-3">
+              <div className="rounded-xl bg-[#0b0e14] p-3 sm:p-4 space-y-2 border border-white/[0.03]">
                 {renderStatBar("To'pga egalik %", stats.ballPossession, true)}
                 {renderStatBar('Kutilgan gollar (xG)', stats.expectedGoals)}
                 {renderStatBar('Katta imkoniyatlar', stats.bigChances)}
@@ -570,68 +498,47 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
             </div>
           )}
 
-          {/* TAB 3: TARKIBLAR (LINEUPS) — Yashil futbol maydoni va reytinglar */}
+          {/* TAB 3: TARKIBLAR */}
           {activeTab === 'lineups' && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {match.lineups ? (
                 <div>
-                  {/* Sxemalar sarlavhasi */}
-                  <div className="flex items-center justify-between px-2 pb-2 text-xs font-bold text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-extrabold">{match.homeTeam.name}</span>
-                      <span className="rounded bg-blue-900/60 px-2 py-0.5 text-blue-200 border border-blue-500/30">
-                        {match.lineups.home.formation}
-                      </span>
+                  <div className="flex items-center justify-between pb-2 text-xs text-slate-300">
+                    <div className="flex items-center gap-1.5 font-semibold">
+                      <span>{match.homeTeam.name}</span>
+                      <span className="text-slate-400">({match.lineups.home.formation})</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded bg-emerald-900/60 px-2 py-0.5 text-emerald-200 border border-emerald-500/30">
-                        {match.lineups.away.formation}
-                      </span>
-                      <span className="text-white font-extrabold">{match.awayTeam.name}</span>
+                    <div className="flex items-center gap-1.5 font-semibold">
+                      <span className="text-slate-400">({match.lineups.away.formation})</span>
+                      <span>{match.awayTeam.name}</span>
                     </div>
                   </div>
 
-                  {/* Yashil futbol maydoni (Soccer Field) */}
-                  <div className="relative w-full h-[540px] sm:h-[600px] rounded-2xl overflow-hidden border-2 border-emerald-600/40 shadow-2xl bg-[#144824]">
-                    {/* Maysa chiziqlari (Grass stripes pattern) */}
-                    <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#144824,#144824_40px,#18522a_40px,#18522a_80px)] opacity-90" />
+                  {/* Futbol maydoni */}
+                  <div className="relative w-full h-[500px] sm:h-[540px] rounded-xl overflow-hidden bg-[#154625] border border-emerald-700/30">
+                    <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#154625,#154625_35px,#184f2a_35px,#184f2a_70px)] opacity-95" />
 
-                    {/* Maydon oq chiziqlari SVG */}
                     <svg
-                      className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
+                      className="absolute inset-0 w-full h-full pointer-events-none opacity-50"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 400 600"
                       preserveAspectRatio="none"
                     >
-                      {/* Tashqi chegara */}
-                      <rect x="15" y="15" width="370" height="570" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      {/* Markaziy chiziq */}
-                      <line x1="15" y1="300" x2="385" y2="300" stroke="#ffffff" strokeWidth="2" />
-                      {/* Markaziy doira */}
-                      <circle cx="200" cy="300" r="45" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      <circle cx="200" cy="300" r="3" fill="#ffffff" />
-                      {/* Yuqori Jarima maydonchasi */}
-                      <rect x="110" y="15" width="180" height="90" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      <rect x="145" y="15" width="110" height="35" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      <path d="M 160 105 A 40 40 0 0 0 240 105" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      {/* Pastki Jarima maydonchasi */}
-                      <rect x="110" y="495" width="180" height="90" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      <rect x="145" y="550" width="110" height="35" fill="none" stroke="#ffffff" strokeWidth="2" />
-                      <path d="M 160 495 A 40 40 0 0 1 240 495" fill="none" stroke="#ffffff" strokeWidth="2" />
+                      <rect x="15" y="15" width="370" height="570" fill="none" stroke="#ffffff" strokeWidth="1.5" />
+                      <line x1="15" y1="300" x2="385" y2="300" stroke="#ffffff" strokeWidth="1.5" />
+                      <circle cx="200" cy="300" r="45" fill="none" stroke="#ffffff" strokeWidth="1.5" />
+                      <rect x="110" y="15" width="180" height="85" fill="none" stroke="#ffffff" strokeWidth="1.5" />
+                      <rect x="110" y="500" width="180" height="85" fill="none" stroke="#ffffff" strokeWidth="1.5" />
                     </svg>
 
-                    {/* Maydon ichidagi ikkala jamoa futbolchilari */}
                     <div className="relative z-10 grid grid-rows-2 h-full">
-                      {/* Yuqori yarim: Mezbon jamoa */}
-                      <div className="border-b border-white/20">
+                      <div className="border-b border-white/10">
                         {renderFieldFormation(
                           match.lineups.home.startXI,
                           'home',
                           match.homeTeam.name
                         )}
                       </div>
-
-                      {/* Pastki yarim: Mehmon jamoa */}
                       <div>
                         {renderFieldFormation(
                           match.lineups.away.startXI,
@@ -642,183 +549,51 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
                     </div>
                   </div>
 
-                  {/* Murabbiylar va Zaxira o'yinchilari */}
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                    <div className="rounded-xl border border-[#1f293d] bg-[#0b0e14] p-3">
-                      <p className="font-bold text-white mb-1">
-                        Murabbiy: <span className="text-gray-300 font-normal">{match.lineups.home.coach}</span>
-                      </p>
-                      <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">Zaxiradagilar:</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {match.lineups.home.substitutes.map((s) => (
-                          <span
-                            key={s.number}
-                            className="rounded bg-[#131722] px-2 py-0.5 text-[11px] text-gray-300 border border-white/5"
-                          >
-                            #{s.number} {s.name}
-                          </span>
-                        ))}
-                      </div>
+                  {/* Murabbiylar */}
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div className="rounded-lg bg-[#0b0e14] p-2.5 border border-white/[0.04]">
+                      <span className="text-slate-400">Murabbiy:</span>{' '}
+                      <span className="font-semibold text-white">{match.lineups.home.coach}</span>
                     </div>
-
-                    <div className="rounded-xl border border-[#1f293d] bg-[#0b0e14] p-3">
-                      <p className="font-bold text-white mb-1">
-                        Murabbiy: <span className="text-gray-300 font-normal">{match.lineups.away.coach}</span>
-                      </p>
-                      <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">Zaxiradagilar:</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {match.lineups.away.substitutes.map((s) => (
-                          <span
-                            key={s.number}
-                            className="rounded bg-[#131722] px-2 py-0.5 text-[11px] text-gray-300 border border-white/5"
-                          >
-                            #{s.number} {s.name}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="rounded-lg bg-[#0b0e14] p-2.5 border border-white/[0.04]">
+                      <span className="text-slate-400">Murabbiy:</span>{' '}
+                      <span className="font-semibold text-white">{match.lineups.away.coach}</span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="rounded-xl border border-[#1f293d] bg-[#0b0e14] p-8 text-center text-gray-500 text-xs">
-                  Tarkiblar rasman e'lon qilinishi kutilmoqda.
+                <div className="py-6 text-center text-slate-500 text-xs">
+                  Tarkiblar hali e'lon qilinmagan.
                 </div>
               )}
             </div>
           )}
 
-          {/* TAB 4: H2H & JADVAL — O'zaro o'yinlar va Jonli Turnir o'rni */}
+          {/* TAB 4: H2H & JADVAL */}
           {activeTab === 'h2h' && (
-            <div className="space-y-4">
-              {/* O'zaro oxirgi 5 o'yin */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2.5 flex items-center gap-1.5">
-                  <Calendar className="w-4 h-4 text-[#10b981]" /> O'zaro Oxirgi O'yinlar (Head-to-Head)
-                </h4>
-                <div className="space-y-2">
-                  {[
-                    { date: '2025.10.12', comp: 'Superliga', home: match.homeTeam.name, away: match.awayTeam.name, score: '2 : 1', win: 'home' },
-                    { date: '2025.05.18', comp: 'Superliga', home: match.awayTeam.name, away: match.homeTeam.name, score: '1 : 1', win: 'draw' },
-                    { date: '2024.11.02', comp: "O'zbekiston Kubogi", home: match.homeTeam.name, away: match.awayTeam.name, score: '3 : 0', win: 'home' },
-                    { date: '2024.08.20', comp: 'Superliga', home: match.awayTeam.name, away: match.homeTeam.name, score: '2 : 2', win: 'draw' },
-                    { date: '2024.04.15', comp: 'Superliga', home: match.homeTeam.name, away: match.awayTeam.name, score: '0 : 1', win: 'away' },
-                  ].map((h2h, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between rounded-xl bg-[#0b0e14] border border-[#1f293d] px-3.5 py-2.5 text-xs"
-                    >
-                      <div className="flex items-center gap-2 text-gray-400">
-                        <span className="font-mono text-[11px] text-gray-500">{h2h.date}</span>
-                        <span className="rounded bg-[#131722] px-1.5 py-0.5 text-[9px] font-bold text-gray-400">
-                          {h2h.comp}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3 font-semibold">
-                        <span className={h2h.win === 'home' ? 'text-white font-bold' : 'text-gray-400'}>
-                          {h2h.home}
-                        </span>
-                        <span className="rounded bg-black/50 px-2 py-0.5 font-mono font-black text-[#10b981] border border-emerald-500/30">
-                          {h2h.score}
-                        </span>
-                        <span className={h2h.win === 'away' ? 'text-white font-bold' : 'text-gray-400'}>
-                          {h2h.away}
-                        </span>
-                      </div>
-
-                      <span
-                        className={`rounded px-1.5 py-0.5 text-[9px] font-extrabold uppercase ${
-                          h2h.win === 'home'
-                            ? 'bg-emerald-500/20 text-emerald-400'
-                            : h2h.win === 'away'
-                            ? 'bg-rose-500/20 text-rose-400'
-                            : 'bg-amber-500/20 text-amber-400'
-                        }`}
-                      >
-                        {h2h.win === 'home' ? "G'alaba" : h2h.win === 'away' ? "Mag'lubiyat" : 'Durang'}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Turnir jadvalidagi o'rni taqqoslovi */}
-              <div className="pt-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2.5 flex items-center gap-1.5">
-                  <Trophy className="w-4 h-4 text-[#10b981]" /> Turnir Jadvalidagi Holat
-                </h4>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  {/* Mezbon jamoa jadval kartochkasi */}
-                  <div className="rounded-xl border border-[#1f293d] bg-[#0b0e14] p-3.5 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <TeamCrest
-                          name={match.homeTeam.name}
-                          logoUrl={match.homeTeam.logo}
-                          size="sm"
-                        />
-                        <span className="font-bold text-white">{match.homeTeam.name}</span>
-                      </div>
-                      <span className="rounded bg-blue-600/20 px-2 py-0.5 text-blue-400 font-extrabold text-[11px] border border-blue-500/30">
-                        #2 O'rin
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2 text-center text-[11px] pt-1 border-t border-[#1f293d]/60">
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">O'YIN</span>
-                        <span className="font-bold text-gray-200">18</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">G'/D/M</span>
-                        <span className="font-bold text-gray-200">11/5/2</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">T-N</span>
-                        <span className="font-bold text-gray-200">36-16</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">OCHKO</span>
-                        <span className="font-black text-[#10b981] text-xs">38</span>
-                      </div>
-                    </div>
+            <div className="space-y-3 text-xs">
+              <h4 className="font-semibold text-slate-300 flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-[#10b981]" /> O'zaro oxirgi o'yinlar
+              </h4>
+              <div className="space-y-1.5">
+                {[
+                  { date: '2025.10.12', home: match.homeTeam.name, away: match.awayTeam.name, score: '2 : 1' },
+                  { date: '2025.05.18', home: match.awayTeam.name, away: match.homeTeam.name, score: '1 : 1' },
+                  { date: '2024.11.02', home: match.homeTeam.name, away: match.awayTeam.name, score: '3 : 0' },
+                ].map((h2h, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between rounded-lg bg-[#0b0e14] px-3 py-2 border border-white/[0.03]"
+                  >
+                    <span className="text-slate-500 tabular-nums">{h2h.date}</span>
+                    <span className="font-medium text-slate-200">
+                      {h2h.home} vs {h2h.away}
+                    </span>
+                    <span className="font-bold text-[#10b981] tabular-nums">
+                      {h2h.score}
+                    </span>
                   </div>
-
-                  {/* Mehmon jamoa jadval kartochkasi */}
-                  <div className="rounded-xl border border-[#1f293d] bg-[#0b0e14] p-3.5 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <TeamCrest
-                          name={match.awayTeam.name}
-                          logoUrl={match.awayTeam.logo}
-                          size="sm"
-                        />
-                        <span className="font-bold text-white">{match.awayTeam.name}</span>
-                      </div>
-                      <span className="rounded bg-emerald-600/20 px-2 py-0.5 text-emerald-400 font-extrabold text-[11px] border border-emerald-500/30">
-                        #3 O'rin
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-4 gap-2 text-center text-[11px] pt-1 border-t border-[#1f293d]/60">
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">O'YIN</span>
-                        <span className="font-bold text-gray-200">18</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">G'/D/M</span>
-                        <span className="font-bold text-gray-200">10/6/2</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">T-N</span>
-                        <span className="font-bold text-gray-200">31-15</span>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 block text-[9px]">OCHKO</span>
-                        <span className="font-black text-[#10b981] text-xs">36</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           )}
