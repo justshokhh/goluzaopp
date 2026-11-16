@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Trophy, Sparkles } from 'lucide-react';
 import { Header, type FilterType } from './components/Header';
 import { TournamentGroup } from './components/TournamentGroup';
 import { MatchRow } from './components/MatchRow';
 import { MatchCenterDrawer } from './components/MatchCenterDrawer';
 import { StandingsWidget, type TournamentKey } from './components/StandingsWidget';
-import { useFootballStore } from './store/useFootballStore';
+import { mockMatches } from './services/mockData';
 import type { Match } from './types/football';
 
 type TournamentFilter = 'all' | 'uz_superliga' | 'ucl' | 'uel' | 'premier_league' | 'laliga';
@@ -13,47 +13,16 @@ type TournamentFilter = 'all' | 'uz_superliga' | 'ucl' | 'uel' | 'premier_league
 interface TournamentTab {
   id: TournamentFilter;
   name: string;
-  badge: string;
-  activeBg: string;
+  dotColor?: string;
 }
 
 const TOURNAMENT_TABS: TournamentTab[] = [
-  {
-    id: 'all',
-    name: 'Barchasi',
-    badge: 'Hammasi',
-    activeBg: 'bg-white/10 text-white font-semibold',
-  },
-  {
-    id: 'uz_superliga',
-    name: 'Superliga',
-    badge: 'UZB',
-    activeBg: 'bg-emerald-500/20 text-[#10b981] font-semibold',
-  },
-  {
-    id: 'ucl',
-    name: 'Champions League',
-    badge: 'UCL',
-    activeBg: 'bg-sky-500/20 text-sky-300 font-semibold',
-  },
-  {
-    id: 'uel',
-    name: 'Europa League',
-    badge: 'UEL',
-    activeBg: 'bg-orange-500/20 text-orange-300 font-semibold',
-  },
-  {
-    id: 'premier_league',
-    name: 'Premier League',
-    badge: 'EPL',
-    activeBg: 'bg-pink-500/20 text-pink-300 font-semibold',
-  },
-  {
-    id: 'laliga',
-    name: 'La Liga',
-    badge: 'ESP',
-    activeBg: 'bg-red-500/20 text-red-300 font-semibold',
-  },
+  { id: 'all', name: 'Barchasi' },
+  { id: 'uz_superliga', name: 'Superliga', dotColor: 'bg-emerald-400' },
+  { id: 'ucl', name: 'Champions League', dotColor: 'bg-sky-400' },
+  { id: 'uel', name: 'Europa League', dotColor: 'bg-orange-400' },
+  { id: 'premier_league', name: 'Premier League', dotColor: 'bg-pink-400' },
+  { id: 'laliga', name: 'La Liga', dotColor: 'bg-rose-400' },
 ];
 
 function App() {
@@ -62,23 +31,6 @@ function App() {
   const [tournamentFilter, setTournamentFilter] = useState<TournamentFilter>('all');
   const [favorites, setFavorites] = useState<Set<string | number>>(new Set(['match-1', 'match-ucl-1']));
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
-
-  // Store ma'lumotlari va actionlari
-  const matches = useFootballStore((s) => s.matches);
-  const isRealApiActive = useFootballStore((s) => s.isRealApiActive);
-  const isLoadingMatches = useFootballStore((s) => s.isLoadingMatches);
-  const startPolling = useFootballStore((s) => s.startPolling);
-  const stopPolling = useFootballStore((s) => s.stopPolling);
-  const fetchRealMatches = useFootballStore((s) => s.fetchRealMatches);
-  const goalNotification = useFootballStore((s) => s.goalNotification);
-
-  // Jonli pollingni boshlash
-  useEffect(() => {
-    startPolling();
-    return () => {
-      stopPolling();
-    };
-  }, [startPolling, stopPolling]);
 
   const toggleFavorite = (matchId: string | number) => {
     setFavorites((prev) => {
@@ -92,10 +44,7 @@ function App() {
     });
   };
 
-  const liveCount = useMemo(
-    () => matches.filter((m) => m.status === 'LIVE' || m.status === 'HT').length,
-    [matches]
-  );
+  const liveCount = useMemo(() => mockMatches.filter((m) => m.status === 'LIVE').length, []);
   const favoritesCount = favorites.size;
 
   const getMatchTournamentKey = (match: Match): TournamentFilter => {
@@ -110,9 +59,8 @@ function App() {
   };
 
   const filteredMatches = useMemo(() => {
-    return matches.filter((match) => {
-      const isLiveMatch = match.status === 'LIVE' || match.status === 'HT';
-      if (statusFilter === 'live' && !isLiveMatch) return false;
+    return mockMatches.filter((match) => {
+      if (statusFilter === 'live' && match.status !== 'LIVE') return false;
       if (statusFilter === 'favorites' && !favorites.has(match.id)) return false;
 
       if (tournamentFilter !== 'all') {
@@ -130,7 +78,7 @@ function App() {
 
       return true;
     });
-  }, [matches, searchQuery, statusFilter, tournamentFilter, favorites]);
+  }, [searchQuery, statusFilter, tournamentFilter, favorites]);
 
   const groupedMatches = useMemo(() => {
     const groups: { league: Match['league']; matches: Match[] }[] = [];
@@ -150,7 +98,7 @@ function App() {
   }, [filteredMatches]);
 
   return (
-    <div className="min-h-screen bg-[#0b0e14] text-slate-100 flex flex-col font-sans selection:bg-[#10b981]/25 selection:text-white">
+    <div className="min-h-screen bg-[#07090e] text-zinc-100 flex flex-col font-sans selection:bg-emerald-500/20 selection:text-white">
       {/* Yuqori Header */}
       <Header
         searchQuery={searchQuery}
@@ -159,15 +107,12 @@ function App() {
         onFilterChange={setStatusFilter}
         liveCount={liveCount}
         favoritesCount={favoritesCount}
-        isRealApi={isRealApiActive}
-        isLoading={isLoadingMatches}
-        onRefresh={() => fetchRealMatches(true)}
       />
 
       {/* Asosiy qism */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-1 w-full space-y-4">
-        {/* Turnirlar navigatsiyasi — toza pill tugmalar, ortiqcha hoshiyalarsiz */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 flex-1 w-full space-y-3.5">
+        {/* Turnirlar navigatsiyasi — Apple Sports minimalizm uslubida */}
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
           {TOURNAMENT_TABS.map((tab) => {
             const isActive = tournamentFilter === tab.id;
             return (
@@ -175,43 +120,32 @@ function App() {
                 key={tab.id}
                 type="button"
                 onClick={() => setTournamentFilter(tab.id)}
-                className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
                   isActive
-                    ? tab.activeBg
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+                    ? 'bg-white/10 text-white font-semibold'
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]'
                 }`}
               >
+                {tab.dotColor && (
+                  <span className={`h-1.5 w-1.5 rounded-full ${tab.dotColor}`} />
+                )}
                 <span>{tab.name}</span>
-                <span className="text-[10px] opacity-75 font-normal">
-                  {tab.badge}
-                </span>
               </button>
             );
           })}
         </div>
 
         {/* 2 ustunli tuzilma */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Chap ustun: Turnirlar va Zich o'yin qatorlari */}
-          <div className="lg:col-span-2 space-y-3.5">
+          <div className="lg:col-span-2 space-y-3">
             {groupedMatches.length === 0 ? (
-              <div className="rounded-2xl bg-[#0d111a] border border-white/[0.05] p-8 text-center">
-                <Trophy className="mx-auto h-10 w-10 text-slate-600 mb-2.5" />
-                <p className="text-sm font-medium text-slate-300">O'yinlar topilmadi</p>
-                <p className="text-xs text-slate-500 mt-1">
-                  {statusFilter === 'live' && tournamentFilter !== 'all' && liveCount > 0
-                    ? `Tanlangan turnirda jonli o'yin yo'q, lekin boshqa turnirlarda ${liveCount} ta jonli o'yin bormoqda.`
-                    : "Qidiruv so'rovi yoki filtrlarni o'zgartirib ko'ring."}
+              <div className="rounded-2xl bg-[#0c0f17] border border-white/[0.04] p-8 text-center">
+                <Trophy className="mx-auto h-8 w-8 text-zinc-600 mb-2" />
+                <p className="text-xs font-medium text-zinc-300">O'yinlar topilmadi</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">
+                  Qidiruv so'rovi yoki filtrlarni o'zgartirib ko'ring.
                 </p>
-                {statusFilter === 'live' && tournamentFilter !== 'all' && liveCount > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setTournamentFilter('all')}
-                    className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/20 px-3.5 py-1.5 text-xs font-semibold text-[#10b981] hover:bg-emerald-500/30 transition-colors"
-                  >
-                    Barcha jonli o'yinlarni ko'rish ({liveCount} ta)
-                  </button>
-                )}
               </div>
             ) : (
               groupedMatches.map((group) => {
@@ -224,7 +158,7 @@ function App() {
                     liveMatchCount={groupLiveCount}
                     initiallyExpanded={true}
                   >
-                    <div className="divide-y divide-white/[0.03]">
+                    <div className="divide-y divide-white/[0.02]">
                       {group.matches.map((match) => (
                         <MatchRow
                           key={match.id}
@@ -242,7 +176,7 @@ function App() {
           </div>
 
           {/* O'ng ustun: Turnir Jadvali va Axborot bloki */}
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             <StandingsWidget
               initialTournament={
                 tournamentFilter !== 'all' ? (tournamentFilter as TournamentKey) : 'uz_superliga'
@@ -250,16 +184,15 @@ function App() {
             />
 
             {/* SofaScore & Apple Sports Ma'lumot Vidjeti */}
-            <div className="rounded-2xl bg-[#0d111a] border border-white/[0.05] p-4 text-xs text-slate-400 space-y-2.5">
-              <div className="flex items-center justify-between text-white font-medium border-b border-white/[0.05] pb-2">
-                <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                  <Sparkles className="w-4 h-4" /> UzScore Pro
+            <div className="rounded-2xl bg-[#0c0f17] border border-white/[0.04] p-3.5 text-xs text-zinc-400 space-y-2">
+              <div className="flex items-center justify-between text-white font-medium border-b border-white/[0.04] pb-2">
+                <span className="flex items-center gap-1.5 text-emerald-400 font-semibold text-xs">
+                  <Sparkles className="w-3.5 h-3.5" /> UzScore Minimalist
                 </span>
-                <span className="text-[11px] text-slate-500">Apple Sports UI</span>
+                <span className="text-[10px] text-zinc-500">v3.2</span>
               </div>
-              <p className="text-slate-300 leading-relaxed text-[11px]">
-                Turnirlar o'z rasmiy ranglariga moslangan: UCL chuqur kosmik-ko'k, UEL olovrang,
-                Superliga zumrad-yashil, EPL binafsha-neon, La Liga granat-qizil.
+              <p className="text-zinc-300 leading-relaxed text-[11px]">
+                Apple Sports va SofaScore estetikasidagi toza tipografika, har bir ligaga mos sof gradientlar va ixcham qatorlar.
               </p>
             </div>
           </div>
@@ -274,24 +207,6 @@ function App() {
         isFavorite={selectedMatch ? favorites.has(selectedMatch.id) : false}
         onToggleFavorite={toggleFavorite}
       />
-
-      {/* Jonli Gol ("GOOOOL!") Xabarnomasi */}
-      {goalNotification && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3.5 bg-[#131722] border border-[#10b981] p-4 rounded-2xl shadow-2xl animate-bounce">
-          <div className="h-3.5 w-3.5 rounded-full bg-[#10b981] animate-ping" />
-          <div>
-            <div className="text-xs font-black text-[#10b981] uppercase tracking-wider">
-              GOOOOL! ({goalNotification.minute}')
-            </div>
-            <div className="text-sm font-bold text-white">
-              {goalNotification.homeTeam} {goalNotification.score.home} - {goalNotification.score.away} {goalNotification.awayTeam}
-            </div>
-            <div className="text-xs text-slate-400">
-              Muallif: <span className="text-slate-200">{goalNotification.scorer}</span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

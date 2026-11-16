@@ -25,13 +25,13 @@ const getTeamPalette = (name: string, crestDetails?: TeamCrestDetails) => {
   }
 
   const palettes = [
-    { bg: 'linear-gradient(135deg, #1d4ed8, #0f172a)', text: '#bfdbfe' }, // Blue (Paxtakor, Man City, Real Madrid)
-    { bg: 'linear-gradient(135deg, #059669, #022c22)', text: '#a7f3d0' }, // Emerald (Nasaf, Navbahor)
-    { bg: 'linear-gradient(135deg, #dc2626, #450a0a)', text: '#fecaca' }, // Red (Arsenal, Liverpool)
-    { bg: 'linear-gradient(135deg, #d97706, #451a03)', text: '#fde68a' }, // Amber (Neftchi, Roma)
-    { bg: 'linear-gradient(135deg, #7c3aed, #2e1065)', text: '#ddd6fe' }, // Purple
-    { bg: 'linear-gradient(135deg, #0891b2, #083344)', text: '#a5f3fc' }, // Cyan
-    { bg: 'linear-gradient(135deg, #e11d48, #4c0519)', text: '#fecdd3' }, // Rose (Atletico, Bayern)
+    { bg: 'linear-gradient(135deg, #1e3a8a, #0f172a)', text: '#bfdbfe' },
+    { bg: 'linear-gradient(135deg, #065f46, #022c22)', text: '#a7f3d0' },
+    { bg: 'linear-gradient(135deg, #b91c1c, #450a0a)', text: '#fecaca' },
+    { bg: 'linear-gradient(135deg, #b45309, #451a03)', text: '#fde68a' },
+    { bg: 'linear-gradient(135deg, #6d28d9, #2e1065)', text: '#ddd6fe' },
+    { bg: 'linear-gradient(135deg, #0e7490, #083344)', text: '#a5f3fc' },
+    { bg: 'linear-gradient(135deg, #be123c, #4c0519)', text: '#fecdd3' },
   ];
 
   const index = Math.abs(hash) % palettes.length;
@@ -47,14 +47,14 @@ export const TeamCrest: React.FC<TeamCrestProps> = ({
 }) => {
   const [imageError, setImageError] = useState(false);
 
-  // Tabiiy o'lchamlar — ortiqcha chegaralarsiz toza ko'rinish
+  // Tabiiy ixcham o'lchamlar (Minimalistik)
   const sizeClasses = {
-    xs: 'h-4 w-4 min-w-4 text-[8px]',
-    sm: 'h-5 w-5 min-w-5 text-[9px]',
-    md: 'h-6 w-6 min-w-6 text-[10px]',
-    lg: 'h-8 w-8 min-w-8 text-xs font-semibold',
-    xl: 'h-12 w-12 min-w-12 text-sm font-bold',
-    '2xl': 'h-16 w-16 min-w-16 text-base font-bold',
+    xs: 'h-3.5 w-3.5 min-w-3.5 text-[7px]',
+    sm: 'h-4.5 w-4.5 min-w-4.5 text-[8.5px]',
+    md: 'h-5.5 w-5.5 min-w-5.5 text-[9.5px]',
+    lg: 'h-7 w-7 min-w-7 text-[11px] font-semibold',
+    xl: 'h-11 w-11 min-w-11 text-xs font-bold',
+    '2xl': 'h-14 w-14 min-w-14 text-sm font-bold',
   };
 
   const getInitials = (teamName: string) => {
@@ -68,36 +68,33 @@ export const TeamCrest: React.FC<TeamCrestProps> = ({
 
   const palette = getTeamPalette(name || 'Jamoa', crestDetails);
 
-  // Haqiqiy rasm — ortiqcha qalin ramkalar va qopqoqlarsiz, toza logotip
+  // Haqiqiy rasm — mutlaqo hoshiyasiz, shaffof, tabiiy
   if (logoUrl && !imageError) {
     return (
       <img
         src={logoUrl}
         alt={name}
-        className={`${sizeClasses[size]} shrink-0 object-contain select-none drop-shadow-sm ${className}`}
+        className={`${sizeClasses[size]} shrink-0 object-contain select-none ${className}`}
         loading="lazy"
         onError={() => setImageError(true)}
       />
     );
   }
 
-  // Zaxira: Nafis, zamonaviy tekis gerb
+  // Zaxira: Juda toza, nafis minimalist nishoncha
   return (
     <div
       style={{
         background: palette.bg,
         color: palette.text,
       }}
-      className={`relative inline-flex items-center justify-center rounded-md shrink-0 font-bold select-none transition-transform ${sizeClasses[size]} ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-[5px] shrink-0 font-bold select-none ${sizeClasses[size]} ${className}`}
       title={name}
     >
       <Shield className="absolute inset-0 m-auto h-3/4 w-3/4 opacity-15 pointer-events-none" />
       <span className="relative z-10 leading-none tracking-tight">
         {getInitials(name)}
       </span>
-      {crestDetails?.stars && crestDetails.stars > 0 && (
-        <span className="absolute -top-1 -right-0.5 text-[7px] text-amber-300">★</span>
-      )}
     </div>
   );
 };

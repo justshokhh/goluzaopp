@@ -18,7 +18,6 @@ const TOURNAMENT_STANDINGS: Record<
   TournamentKey,
   {
     title: string;
-    subtitle: string;
     season: string;
     theme: {
       headerBg: string;
@@ -30,23 +29,21 @@ const TOURNAMENT_STANDINGS: Record<
 > = {
   uz_superliga: {
     title: "O'zbekiston Superligasi",
-    subtitle: '2026-yilgi mavsum turnir jadvali',
     season: '2026',
     theme: {
-      headerBg: 'bg-gradient-to-r from-[#031711] via-[#06261c] to-[#06120e]',
+      headerBg: 'bg-gradient-to-r from-[#03140e] via-[#052119] to-[#050e0b]',
       accent: 'text-[#34d399]',
-      pillActive: 'bg-[#10b981] text-black',
+      pillActive: 'bg-[#10b981] text-black font-semibold',
     },
     rows: mockStandings,
   },
   ucl: {
     title: 'UEFA Champions League',
-    subtitle: 'Umumiy liga bosqichi jadvali',
     season: '2025/26',
     theme: {
-      headerBg: 'bg-gradient-to-r from-[#081026] via-[#0c1a40] to-[#080d1a]',
+      headerBg: 'bg-gradient-to-r from-[#070e22] via-[#091536] to-[#070b18]',
       accent: 'text-[#38bdf8]',
-      pillActive: 'bg-[#38bdf8] text-black',
+      pillActive: 'bg-[#38bdf8] text-black font-semibold',
     },
     rows: [
       {
@@ -101,12 +98,11 @@ const TOURNAMENT_STANDINGS: Record<
   },
   premier_league: {
     title: 'Premier League',
-    subtitle: 'Angliya Chempionati jadvali',
     season: '2025/26',
     theme: {
-      headerBg: 'bg-gradient-to-r from-[#170522] via-[#250937] to-[#0d0514]',
+      headerBg: 'bg-gradient-to-r from-[#13051c] via-[#1e072c] to-[#0a0410]',
       accent: 'text-[#f472b6]',
-      pillActive: 'bg-[#f472b6] text-black',
+      pillActive: 'bg-[#f472b6] text-black font-semibold',
     },
     rows: [
       {
@@ -149,12 +145,11 @@ const TOURNAMENT_STANDINGS: Record<
   },
   laliga: {
     title: 'LaLiga EA Sports',
-    subtitle: 'Ispaniya Chempionati jadvali',
     season: '2025/26',
     theme: {
-      headerBg: 'bg-gradient-to-r from-[#1c0507] via-[#2d090d] to-[#0e0405]',
+      headerBg: 'bg-gradient-to-r from-[#160406] via-[#24080b] to-[#0a0304]',
       accent: 'text-[#f87171]',
-      pillActive: 'bg-[#ef4444] text-white',
+      pillActive: 'bg-[#ef4444] text-white font-semibold',
     },
     rows: [
       {
@@ -191,12 +186,11 @@ const TOURNAMENT_STANDINGS: Record<
   },
   uel: {
     title: 'UEFA Europa League',
-    subtitle: 'Yevropa Ligasi umumiy bosqichi',
     season: '2025/26',
     theme: {
-      headerBg: 'bg-gradient-to-r from-[#140b06] via-[#241207] to-[#0a0807]',
+      headerBg: 'bg-gradient-to-r from-[#120a05] via-[#1f1006] to-[#090706]',
       accent: 'text-[#fb923c]',
-      pillActive: 'bg-[#f97316] text-black',
+      pillActive: 'bg-[#f97316] text-black font-semibold',
     },
     rows: [
       {
@@ -236,19 +230,19 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
 
   const currentData = TOURNAMENT_STANDINGS[selectedTournament] || TOURNAMENT_STANDINGS.uz_superliga;
 
-  // Oxirgi 5 o'yin formasi nishonchasi
+  // Oxirgi 5 o'yin formasi nishonchasi (Nafis minimalist)
   const renderFormCircle = (result: FormResult, idx: number) => {
-    let bg = 'bg-slate-700 text-slate-300';
+    let bg = 'bg-zinc-800 text-zinc-400';
     let label = 'D';
 
     if (result === 'W') {
-      bg = 'bg-[#10b981] text-black font-bold';
+      bg = 'bg-emerald-500/20 text-emerald-400';
       label = 'G';
     } else if (result === 'D') {
-      bg = 'bg-amber-500 text-black font-bold';
+      bg = 'bg-amber-500/20 text-amber-400';
       label = 'D';
     } else if (result === 'L') {
-      bg = 'bg-rose-600 text-white font-bold';
+      bg = 'bg-rose-500/20 text-rose-400';
       label = 'M';
     }
 
@@ -256,50 +250,47 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
       <span
         key={idx}
         title={result === 'W' ? "G'alaba" : result === 'D' ? 'Durang' : "Mag'lubiyat"}
-        className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[9px] ${bg}`}
+        className={`inline-flex h-3.5 w-3.5 items-center justify-center rounded-full text-[8.5px] font-semibold tabular-nums ${bg}`}
       >
         {label}
       </span>
     );
   };
 
-  // Nozik zona belgisi rangi
+  // Nozik zona belgisi (1px/2px rangli nuqta yoki chiziq)
   const getZoneBorderClass = (row: StandingRow, index: number, total: number) => {
-    if (row.zone === 'ucl') return 'border-l-2 border-l-sky-500';
-    if (row.zone === 'uel') return 'border-l-2 border-l-amber-500';
+    if (row.zone === 'ucl') return 'border-l-2 border-l-sky-400';
+    if (row.zone === 'uel') return 'border-l-2 border-l-orange-400';
     if (row.zone === 'relegation') return 'border-l-2 border-l-rose-500';
 
-    if (selectedTournament === 'ucl' && index < 8) return 'border-l-2 border-l-sky-500';
-    if (selectedTournament === 'uel' && index < 8) return 'border-l-2 border-l-amber-500';
-    if (index === 0) return 'border-l-2 border-l-[#10b981]';
-    if (index < 3) return 'border-l-2 border-l-sky-500';
+    if (selectedTournament === 'ucl' && index < 8) return 'border-l-2 border-l-sky-400';
+    if (selectedTournament === 'uel' && index < 8) return 'border-l-2 border-l-orange-400';
+    if (index === 0) return 'border-l-2 border-l-emerald-400';
+    if (index < 3) return 'border-l-2 border-l-sky-400';
     if (index >= total - 2) return 'border-l-2 border-l-rose-500';
     return 'border-l-2 border-l-transparent';
   };
 
   return (
     <div
-      className={`overflow-hidden rounded-2xl bg-[#0d111a] border border-white/[0.06] shadow-sm transition-all ${className}`}
+      className={`overflow-hidden rounded-2xl bg-[#0c0f17] border border-white/[0.04] shadow-sm transition-all ${className}`}
     >
-      {/* Sarlavha paneli — ortiqcha hoshiyalarsiz, toza */}
-      <div className={`p-4 ${currentData.theme.headerBg}`}>
+      {/* Sarlavha paneli — real minimalist */}
+      <div className={`p-3.5 sm:p-4 ${currentData.theme.headerBg}`}>
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5">
-            <Trophy className={`h-5 w-5 ${currentData.theme.accent}`} />
-            <div>
-              <h2 className="text-[15px] font-bold text-white tracking-tight flex items-center gap-1.5">
-                <span>{currentData.title}</span>
-                <span className="text-xs font-normal text-slate-400">
-                  {currentData.season}
-                </span>
-              </h2>
-              <p className="text-[11px] text-slate-400">{currentData.subtitle}</p>
-            </div>
+          <div className="flex items-center gap-2">
+            <Trophy className={`h-4 w-4 ${currentData.theme.accent}`} />
+            <h2 className="text-[13.5px] font-semibold text-white tracking-tight flex items-center gap-1.5">
+              <span>{currentData.title}</span>
+              <span className="text-[11px] font-normal text-zinc-400">
+                {currentData.season}
+              </span>
+            </h2>
           </div>
         </div>
 
-        {/* Turnir tanlash navigatsiyasi — toza pill tugmachalar */}
-        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+        {/* Turnir tanlash navigatsiyasi — toza pilllar */}
+        <div className="mt-2.5 flex items-center gap-1 overflow-x-auto no-scrollbar pt-0.5">
           {[
             { id: 'uz_superliga', label: 'Superliga' },
             { id: 'ucl', label: 'UCL' },
@@ -313,10 +304,10 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
                 key={t.id}
                 type="button"
                 onClick={() => setSelectedTournament(t.id as TournamentKey)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors whitespace-nowrap ${
+                className={`rounded-lg px-2.5 py-1 text-[11px] font-medium transition-colors whitespace-nowrap ${
                   isSelected
                     ? currentData.theme.pillActive
-                    : 'text-slate-400 hover:text-white bg-white/[0.05]'
+                    : 'text-zinc-400 hover:text-white bg-white/[0.04]'
                 }`}
               >
                 {t.label}
@@ -326,24 +317,24 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
         </div>
       </div>
 
-      {/* Jadval tanasi (SofaScore zich tartibi) */}
+      {/* Jadval tanasi */}
       <div className="overflow-x-auto no-scrollbar">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-white/[0.04] bg-[#0b0e14] text-[11px] font-semibold text-slate-400">
-              <th scope="col" className="w-8 py-2 text-center">#</th>
-              <th scope="col" className="min-w-[130px] sm:min-w-[160px] py-2 px-2">Jamoa</th>
-              <th scope="col" className="w-7 py-2 text-center" title="O'yinlar">O'</th>
-              <th scope="col" className="w-7 py-2 text-center" title="G'alaba">G'</th>
-              <th scope="col" className="w-7 py-2 text-center" title="Durang">D</th>
-              <th scope="col" className="w-7 py-2 text-center" title="Mag'lubiyat">M</th>
-              <th scope="col" className="hidden sm:table-cell w-10 py-2 text-center" title="To'plar nisbati">T/N</th>
-              <th scope="col" className="w-8 py-2 text-center" title="To'plar farqi">+/-</th>
-              <th scope="col" className="w-9 py-2 text-center font-bold text-white" title="Ochko">O</th>
-              <th scope="col" className="hidden md:table-cell py-2 px-2 text-center min-w-[110px]" title="Oxirgi 5 o'yin formasi">Forma</th>
+            <tr className="border-b border-white/[0.03] bg-[#07090e] text-[10px] font-medium text-zinc-500 uppercase tracking-wider">
+              <th scope="col" className="w-7 py-2 text-center">#</th>
+              <th scope="col" className="min-w-[130px] sm:min-w-[150px] py-2 px-2">Jamoa</th>
+              <th scope="col" className="w-6 py-2 text-center" title="O'yinlar">O'</th>
+              <th scope="col" className="w-6 py-2 text-center" title="G'alaba">G'</th>
+              <th scope="col" className="w-6 py-2 text-center" title="Durang">D</th>
+              <th scope="col" className="w-6 py-2 text-center" title="Mag'lubiyat">M</th>
+              <th scope="col" className="hidden sm:table-cell w-9 py-2 text-center" title="To'plar nisbati">T/N</th>
+              <th scope="col" className="w-7 py-2 text-center" title="To'plar farqi">+/-</th>
+              <th scope="col" className="w-8 py-2 text-center font-semibold text-white" title="Ochko">O</th>
+              <th scope="col" className="hidden md:table-cell py-2 px-2 text-center min-w-[100px]" title="Oxirgi 5 o'yin formasi">Forma</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.03] bg-[#0b0e14]">
+          <tbody className="divide-y divide-white/[0.02] bg-[#07090e]">
             {currentData.rows.map((row, idx) => {
               const total = currentData.rows.length;
               const borderClass = getZoneBorderClass(row, idx, total);
@@ -352,14 +343,14 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
                 <tr
                   key={row.team.id}
                   onClick={() => onTeamClick && onTeamClick(row.team.id)}
-                  className={`transition-colors hover:bg-[#131722]/80 cursor-pointer ${borderClass}`}
+                  className={`transition-colors hover:bg-white/[0.02] cursor-pointer ${borderClass}`}
                 >
                   {/* O'rin */}
-                  <td className="py-2 text-center text-slate-400 font-medium tabular-nums">
+                  <td className="py-2 text-center text-zinc-500 font-medium tabular-nums text-[11px]">
                     {row.position}
                   </td>
 
-                  {/* Jamoa logosi va nomi (ortiqcha hoshiyalarsiz) */}
+                  {/* Jamoa logosi va nomi */}
                   <td className="py-2 px-2">
                     <div className="flex items-center gap-2 min-w-0">
                       <TeamCrest
@@ -368,40 +359,40 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
                         crestDetails={row.team.crestDetails}
                         size="xs"
                       />
-                      <span className="truncate text-slate-200 font-medium tracking-tight">
+                      <span className="truncate text-zinc-200 font-medium tracking-tight text-[12.5px]">
                         {row.team.shortName || row.team.name}
                       </span>
                     </div>
                   </td>
 
                   {/* Ko'rsatkichlar */}
-                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.played}</td>
-                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.won}</td>
-                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.drawn}</td>
-                  <td className="py-2 text-center text-slate-400 tabular-nums">{row.lost}</td>
+                  <td className="py-2 text-center text-zinc-400 tabular-nums text-[11px]">{row.played}</td>
+                  <td className="py-2 text-center text-zinc-400 tabular-nums text-[11px]">{row.won}</td>
+                  <td className="py-2 text-center text-zinc-400 tabular-nums text-[11px]">{row.drawn}</td>
+                  <td className="py-2 text-center text-zinc-400 tabular-nums text-[11px]">{row.lost}</td>
 
-                  <td className="hidden sm:table-cell py-2 text-center text-slate-400 tabular-nums text-[11px]">
+                  <td className="hidden sm:table-cell py-2 text-center text-zinc-500 tabular-nums text-[10.5px]">
                     {row.gf}-{row.ga}
                   </td>
 
                   <td
-                    className={`py-2 text-center tabular-nums font-medium ${
+                    className={`py-2 text-center tabular-nums text-[11px] font-medium ${
                       row.gd > 0
                         ? 'text-emerald-400'
                         : row.gd < 0
                         ? 'text-rose-400'
-                        : 'text-slate-400'
+                        : 'text-zinc-500'
                     }`}
                   >
                     {row.gd > 0 ? `+${row.gd}` : row.gd}
                   </td>
 
                   {/* Ochko */}
-                  <td className="py-2 text-center font-bold text-white tabular-nums">
+                  <td className="py-2 text-center font-semibold text-white tabular-nums text-[12px]">
                     {row.points}
                   </td>
 
-                  {/* Oxirgi 5 o'yin formasi */}
+                  {/* Forma */}
                   <td className="hidden md:table-cell py-2 px-2 text-center">
                     <div className="flex items-center justify-center gap-1">
                       {row.form && row.form.map((res, i) => renderFormCircle(res, i))}
@@ -415,15 +406,15 @@ export const StandingsWidget: React.FC<StandingsWidgetProps> = ({
       </div>
 
       {/* Zonalarning qisqa izohi */}
-      <div className="flex items-center justify-between border-t border-white/[0.04] bg-[#0d111a] px-3.5 py-2 text-[10px] text-slate-400">
+      <div className="flex items-center justify-between border-t border-white/[0.03] bg-[#0a0d14] px-3.5 py-2 text-[10px] text-zinc-500">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" /> Chempion / OChL
+          <span className="flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> OChL / Chempion
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-sky-500" /> UCL / Xalqaro
+          <span className="flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-sky-400" /> UCL / Xalqaro
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-rose-500" /> Quyi liga
           </span>
         </div>

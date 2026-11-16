@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #0b0e14;
-  --bg-secondary: #131722;
+  --bg-primary: #07090e;
+  --bg-secondary: #0e121b;
   --accent-green: #10b981;
   color-scheme: dark;
 }
@@ -11,13 +11,16 @@
   box-sizing: border-box;
 }
 
-body {
+html, body {
   margin: 0;
-  background-color: #0b0e14;
-  color: #f3f4f6;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+  padding: 0;
+  background-color: #07090e;
+  color: #f4f4f5;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'tnum';
+  letter-spacing: -0.012em;
   overflow-x: hidden;
 }
 
@@ -30,26 +33,30 @@ body {
   flex-direction: column;
 }
 
-/* O'ta silliq scrollbar */
+/* Raqamlar uchun mukammal tabular-nums */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* O'ta nafis va yengil scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0e14;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f293d;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: rgba(255, 255, 255, 0.16);
 }
 
-/* Gorizontal no-scrollbar yordamchisi */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
