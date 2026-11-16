@@ -7,11 +7,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Gol Uz" />
-  <title>Gol Uz — Xalqaro & O‘zbekiston Futbol Platformasi 2026</title>
+  <title>UzScore — O‘zbekiston Superligasi va Jonli Natijalar</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div id="root"></div>
 
+  <div style="display: none;" id="legacy-vanilla-app">
   <!-- Asosiy Yuqori Panel (Header) -->
   <header>
     <div class="wrap topbar">
@@ -271,11 +273,13 @@
   <footer>
     <div class="wrap">Gol Uz © 2026 • Professional Xalqaro va O‘zbekiston Futbol Platformasi</div>
   </footer>
+  </div>
 
   <!-- Modulli Skriptlar Ulanishi -->
-  <script src="media.js"></script>
-  <script src="leagues.js"></script>
-  <script src="players.js"></script>
-  <script src="app.js"></script>
+  <!-- <script src="media.js"></script> -->
+  <!-- <script src="leagues.js"></script> -->
+  <!-- <script src="players.js"></script> -->
+  <!-- <script src="app.js"></script> -->
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
