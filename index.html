@@ -2,110 +2,167 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#060913" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#070B14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Gol Uz" />
-  <title>Gol Uz — O‘zbekiston Superligasi 2026</title>
+  <title>Gol Uz — Xalqaro & O‘zbekiston Futbol Platformasi 2026</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <!-- Asosiy Yuqori Panel (Header) -->
   <header>
     <div class="wrap topbar">
-      <div class="brand">
+      <div class="brand" onclick="goMainTab('v-matches')">
         <div class="brand-logo">⚽</div>
         <div>
-          <span class="brand-name">Gol Uz</span>
-          <span class="brand-sub">O‘zbekiston Superligasi 2026 • Modulli Platforma</span>
+          <div class="brand-name">Gol Uz <span class="brand-badge">PRO</span></div>
+          <span class="brand-sub">SofaScore & Apple Sports Style • 2026</span>
         </div>
       </div>
       <div class="top-right">
-        <button class="api-trigger" onclick="openApiModal()">🔑 API Kalit</button>
+        <button class="btn-icon-subtle" onclick="openApiModal()">🔑 API Kalit</button>
         <div class="live-pill">
           <span class="dot"></span>
-          <span id="status-text">28-TUR • LIVE</span>
+          <span id="status-text">LIVE CENTER</span>
         </div>
       </div>
     </div>
   </header>
 
   <main class="wrap">
-    <nav class="nav-bar">
-      <button class="nav-tab active" onclick="goTab('v-live', this)">🔴 Jonli & Taqvim</button>
-      <button class="nav-tab" onclick="goTab('v-table', this)">🏆 Turnir jadvali</button>
-      <button class="nav-tab" onclick="goTab('v-scorers', this)">👟 To‘purarlar</button>
-      <button class="nav-tab" onclick="goTab('v-clubs', this)">🛡️ 16 Klub & Tarkib</button>
+    <!-- Mintaqalar bo'yicha tezkor filtrlar -->
+    <div class="region-nav-wrap">
+      <div class="region-scroll">
+        <button class="region-pill active" onclick="filterByRegion('ALL', this)">🌐 Barchasi</button>
+        <button class="region-pill" onclick="filterByRegion('INT', this)">🇪🇺 Xalqaro & UEFA</button>
+        <button class="region-pill" onclick="filterByRegion('TOP5', this)">🏆 Yevropa Top-5</button>
+        <button class="region-pill" onclick="filterByRegion('AFC', this)">🌏 Osiyo (AFC)</button>
+        <button class="region-pill" onclick="filterByRegion('UZB', this)">🇺🇿 O‘zbekiston</button>
+      </div>
+    </div>
+
+    <!-- Desktop Navigatsiya Paneli -->
+    <nav class="desktop-nav">
+      <button class="nav-tab active" id="dtab-matches" onclick="goMainTab('v-matches', this)">⚽ O‘yinlar & Jonli</button>
+      <button class="nav-tab" id="dtab-leagues" onclick="goMainTab('v-leagues', this)">🏆 Barcha Ligalar</button>
+      <button class="nav-tab" id="dtab-compare" onclick="goMainTab('v-compare', this)">⚔️ Taqqoslash (H2H)</button>
+      <button class="nav-tab" id="dtab-favorites" onclick="goMainTab('v-favorites', this)">⭐ Sevimlilar</button>
+      <button class="nav-tab" id="dtab-clubs" onclick="goMainTab('v-clubs', this)">🛡️ Superliga 16 Klubi</button>
     </nav>
 
-    <!-- 1. JONLI VA TAQVIM -->
-    <section id="v-live" class="view active anim">
+    <!-- 1. O'YINLAR VA JONLI MATChLAR -->
+    <section id="v-matches" class="view active anim">
       <div class="sec-title">
-        <span>🔴 Jonli uchrashuvlar (SofaScore Live)</span>
-        <span>Ichki statistika uchun bosing</span>
+        <span>🔴 Jonli Uchrashuvlar (SofaScore Live Center)</span>
+        <span>xG va to‘liq statistika</span>
       </div>
       <div class="grid-2" id="live-container"></div>
 
       <div class="sec-title">
-        <span>📅 28-tur taqvimi (19–22 Noyabr)</span>
-        <span>Bo‘lajak o‘yinlar</span>
+        <span>📅 Bo‘lajak Uchrashuvlar Taqvimi</span>
+        <span>28-tur bahslari</span>
       </div>
       <div class="grid-2" id="upcoming-container"></div>
 
       <div class="sec-title">
-        <span>✅ So‘nggi natijalar (26–27-turlar)</span>
-        <span>Yakunlangan</span>
+        <span>✅ So‘nggi Natijalar</span>
+        <span>Yakunlangan uchrashuvlar</span>
       </div>
       <div class="grid-2" id="recent-container"></div>
     </section>
 
-    <!-- 2. TURNIR JADVALI -->
-    <section id="v-table" class="view anim">
+    <!-- 2. BARCHA 18 TA MUSOBAQA (LIGALAR) -->
+    <section id="v-leagues" class="view anim">
       <div class="sec-title">
-        <span>🏆 O‘zbekiston Superligasi — 2026 Turnir jadvali</span>
-        <span>27-tur yakunlari</span>
+        <span>🏆 Xalqaro va Mahalliy Musobaqalar (18 ta Liga)</span>
+        <span>Jadval va taqvim uchun bosing</span>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Klub</th>
-              <th>O‘</th>
-              <th>G‘</th>
-              <th>D</th>
-              <th>M</th>
-              <th>To‘plar</th>
-              <th>Ochko</th>
-            </tr>
-          </thead>
-          <tbody id="standings-body"></tbody>
-        </table>
+      <div class="grid-3" id="leagues-container"></div>
+    </section>
+
+    <!-- 3. HEAD-TO-HEAD TAQQOSLASH -->
+    <section id="v-compare" class="view anim">
+      <div class="sec-title">
+        <span>⚔️ Professional Taqqoslash (Head-to-Head)</span>
+        <span>Klublar va futbolchilar o‘zaro solishtiruvi</span>
+      </div>
+      <div class="compare-container">
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <button class="f-pill active" id="btn-cmp-team" onclick="setCompareMode('team')">🛡️ Klublar taqqoslovi</button>
+          <button class="f-pill" id="btn-cmp-player" onclick="setCompareMode('player')">👤 Futbolchilar taqqoslovi</button>
+        </div>
+        <div id="compare-body"></div>
       </div>
     </section>
 
-    <!-- 3. TO'PURARLAR -->
-    <section id="v-scorers" class="view anim">
+    <!-- 4. SEVIMLILAR (FAVORITES) -->
+    <section id="v-favorites" class="view anim">
       <div class="sec-title">
-        <span>👟 Eng yaxshi to‘purarlar (2026)</span>
-        <span>To‘liq statistika uchun futbolchini bosing</span>
+        <span>⭐ Sevimli Klublar va Futbolchilar</span>
+        <span>Tezkor monitoring</span>
       </div>
-      <div class="grid-2" id="scorers-container"></div>
+      <div id="favorites-container"></div>
     </section>
 
-    <!-- 4. 16 KLUB VA TARKIB -->
+    <!-- 5. 16 SUPERLIGA KLUBI VA TARKIBI -->
     <section id="v-clubs" class="view anim">
       <div class="sec-title">
-        <span>🛡️ Barcha 16 ta Superliga klubi</span>
-        <span>Jamoa tarkibi va futbolchilar profili</span>
+        <span>🛡️ O‘zbekiston Superligasi — 16 ta Klub</span>
+        <span>Jamoalar va to‘liq tarkib</span>
       </div>
       <input type="text" class="search-inp" id="search-box" onkeyup="searchClubs()" placeholder="🔍 Jamoa, murabbiy yoki futbolchi ismini qidiring...">
       <div class="grid-3" id="clubs-container"></div>
     </section>
+
+    <!-- 6. PROFIL VA SOZLAMALAR -->
+    <section id="v-profile" class="view anim">
+      <div class="sec-title">
+        <span>👤 Profil va API Sozlamalari</span>
+        <span>Platforma holati</span>
+      </div>
+      <div class="compare-card" style="text-align: left; max-width: 540px; margin: 0 auto;">
+        <h3 style="font-size: 17px; margin-bottom: 8px;">🔑 API-Football Integratsiyasi</h3>
+        <p style="font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.5;">
+          <b>api-sports.io</b> kaliti orqali dunyoning barcha 18 ta ligasi bo‘yicha jonli natijalarni va Superliganing 16 ta klubining to‘liq futbolchilarini yuklashingiz mumkin.
+        </p>
+        <button class="nav-tab active" style="width: 100%; margin-bottom: 10px;" onclick="openApiModal()">API Kalitni boshqarish</button>
+        <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 10px; font-size: 12px; color: var(--muted);">
+          <div>• Holat: <span id="profile-api-status" style="color: var(--mint); font-weight: 700;">Lokal Demo Rejimi</span></div>
+          <div style="margin-top: 4px;">• Mavsum: <b>2026</b></div>
+          <div style="margin-top: 4px;">• Uslub: <b>SofaScore & Apple Sports Minimalist Dark UI</b></div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Modal 1: Jonli o'yin statistikasi -->
+  <!-- iPhone & Mobil Bottom Tab Bar (O'yinlar, Ligalar, Taqqoslash, Sevimlilar, Profil) -->
+  <nav class="bottom-tab-bar">
+    <button class="bottom-tab-item active" id="btab-matches" onclick="goMainTab('v-matches')">
+      <span class="bottom-tab-icon">⚽</span>
+      <span>O‘yinlar</span>
+    </button>
+    <button class="bottom-tab-item" id="btab-leagues" onclick="goMainTab('v-leagues')">
+      <span class="bottom-tab-icon">🏆</span>
+      <span>Ligalar</span>
+    </button>
+    <button class="bottom-tab-item" id="btab-compare" onclick="goMainTab('v-compare')">
+      <span class="bottom-tab-icon">⚔️</span>
+      <span>Taqqoslash</span>
+    </button>
+    <button class="bottom-tab-item" id="btab-favorites" onclick="goMainTab('v-favorites')">
+      <span class="bottom-tab-icon">⭐</span>
+      <span>Sevimlilar</span>
+    </button>
+    <button class="bottom-tab-item" id="btab-profile" onclick="goMainTab('v-profile')">
+      <span class="bottom-tab-icon">👤</span>
+      <span>Profil</span>
+    </button>
+  </nav>
+
+  <!-- Modal 1: SofaScore Jonli o'yin statistikasi -->
   <div class="modal-overlay" id="m-match" onclick="bgClick(event, 'm-match')">
     <div class="modal-card">
       <div class="modal-hdr">
@@ -119,18 +176,47 @@
     </div>
   </div>
 
-  <!-- Modal 2: Klub tarkibi -->
+  <!-- Modal 2: Liga tafsilotlari (Jadval, Taqvim, To'purarlar) -->
+  <div class="modal-overlay" id="m-league" onclick="bgClick(event, 'm-league')">
+    <div class="modal-card" style="max-width: 820px;">
+      <div class="modal-hdr">
+        <div class="modal-hdr-user">
+          <div class="glass-badge size-md" id="ml-badge-wrap">
+            <img id="ml-logo" class="real-logo" src="" alt="">
+          </div>
+          <div>
+            <h3 id="ml-title" class="modal-title-lg"></h3>
+            <p id="ml-sub" class="modal-sub-muted"></p>
+          </div>
+        </div>
+        <button class="close-x" onclick="hideModal('m-league')">✕</button>
+      </div>
+      <div class="filter-row">
+        <button class="f-pill active" onclick="showLeagueSubTab('table', this)">🏆 Turnir Jadvali</button>
+        <button class="f-pill" onclick="showLeagueSubTab('fixtures', this)">📅 O‘yinlar Taqvimi</button>
+        <button class="f-pill" onclick="showLeagueSubTab('scorers', this)">👟 To‘purarlar</button>
+      </div>
+      <div id="ml-body"></div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Klub tarkibi -->
   <div class="modal-overlay" id="m-club" onclick="bgClick(event, 'm-club')">
     <div class="modal-card">
       <div class="modal-hdr">
         <div class="modal-hdr-user">
-          <img id="mc-logo" class="real-logo" src="" alt="">
+          <div class="glass-badge size-md">
+            <img id="mc-logo" class="real-logo" src="" alt="">
+          </div>
           <div>
             <h3 id="mc-title" class="modal-title-lg"></h3>
             <p id="mc-sub" class="modal-sub-muted"></p>
           </div>
         </div>
-        <button class="close-x" onclick="hideModal('m-club')">✕</button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="fav-btn" id="mc-fav-btn" onclick="toggleCurrentClubFav()">⭐</button>
+          <button class="close-x" onclick="hideModal('m-club')">✕</button>
+        </div>
       </div>
       <div class="filter-row">
         <button class="f-pill active" onclick="filterRoster('ALL', this)">Barchasi</button>
@@ -143,7 +229,7 @@
     </div>
   </div>
 
-  <!-- Modal 3: Futbolchi profili -->
+  <!-- Modal 4: Futbolchi profili -->
   <div class="modal-overlay z-player" id="m-player" onclick="bgClick(event, 'm-player')">
     <div class="modal-card card-md">
       <div class="modal-hdr">
@@ -154,14 +240,17 @@
             <p id="mp-info" class="modal-sub-muted"></p>
           </div>
         </div>
-        <button class="close-x" onclick="hideModal('m-player')">✕</button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="fav-btn" id="mp-fav-btn" onclick="toggleCurrentPlayerFav()">⭐</button>
+          <button class="close-x" onclick="hideModal('m-player')">✕</button>
+        </div>
       </div>
       <div id="mp-bio-strip" class="bio-strip"></div>
       <div id="mp-stats-body"></div>
     </div>
   </div>
 
-  <!-- Modal 4: API Kalit -->
+  <!-- Modal 5: API Kalit -->
   <div class="modal-overlay" id="m-api" onclick="bgClick(event, 'm-api')">
     <div class="modal-card card-sm">
       <div class="modal-hdr">
@@ -169,7 +258,7 @@
         <button class="close-x" onclick="hideModal('m-api')">✕</button>
       </div>
       <p class="api-desc">
-        <b>api-sports.io</b> kalitingizni kiriting — barcha 16 ta klubning to‘liq tarkibi, jonli o‘yinlar va har bir futbolchining real statistikasi yuklanadi:
+        <b>api-sports.io</b> kalitingizni kiriting — dunyoning barcha 18 ta ligasi va Superliganing 16 ta klubining real jonli statistikasi ulanadi:
       </p>
       <input type="text" id="api-key-field" class="search-inp" placeholder="API kalitni joylang...">
       <div class="btn-row">
@@ -180,10 +269,12 @@
   </div>
 
   <footer>
-    <div class="wrap">Gol Uz © 2026 • O‘zbekiston Superligasi jonli statistika platformasi</div>
+    <div class="wrap">Gol Uz © 2026 • Professional Xalqaro va O‘zbekiston Futbol Platformasi</div>
   </footer>
 
-  <!-- Modulli fayllar ulanishi: endi har bir qism alohida tahrirlanadi -->
+  <!-- Modulli Skriptlar Ulanishi -->
+  <script src="media.js"></script>
+  <script src="leagues.js"></script>
   <script src="players.js"></script>
   <script src="app.js"></script>
 </body>
