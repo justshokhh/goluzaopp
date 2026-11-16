@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Trophy, X, Radio, Star } from 'lucide-react';
+import { Search, Trophy, X, Radio, Star, RefreshCw } from 'lucide-react';
 
 export type FilterType = 'all' | 'live' | 'favorites';
 
@@ -10,6 +10,9 @@ export interface HeaderProps {
   onFilterChange: (filter: FilterType) => void;
   liveCount?: number;
   favoritesCount?: number;
+  isRealApi?: boolean;
+  isLoading?: boolean;
+  onRefresh?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +22,9 @@ export const Header: React.FC<HeaderProps> = ({
   onFilterChange,
   liveCount = 0,
   favoritesCount = 0,
+  isRealApi = false,
+  isLoading = false,
+  onRefresh,
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full bg-[#0b0e14]/90 backdrop-blur-xl border-b border-white/[0.05] transition-colors">
@@ -66,9 +72,16 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Jonli indikator (Desktop) */}
-          <div className="hidden md:flex items-center gap-2 text-xs">
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#131722] text-slate-300">
+          {/* Jonli indikator va Yangilash (Desktop & Mobile) */}
+          <div className="flex items-center gap-2 text-xs">
+            {isRealApi && (
+              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-[#10b981] border border-emerald-500/20">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#10b981] animate-ping" />
+                API Real Live
+              </span>
+            )}
+
+            <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg bg-[#131722] text-slate-300">
               <Radio
                 className={`h-3.5 w-3.5 ${
                   liveCount > 0 ? 'text-[#10b981] animate-pulse' : 'text-slate-500'
@@ -77,10 +90,22 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="font-medium text-slate-400">
                 Jonli:{' '}
                 <span className={`font-semibold ${liveCount > 0 ? 'text-[#10b981]' : 'text-slate-400'}`}>
-                  {liveCount} ta o'yin
+                  {liveCount} ta
                 </span>
               </span>
             </div>
+
+            {onRefresh && (
+              <button
+                type="button"
+                onClick={onRefresh}
+                disabled={isLoading}
+                title="Jonli ma'lumotlarni yangilash"
+                className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#131722] hover:bg-white/[0.08] text-slate-400 hover:text-white transition-all disabled:opacity-50"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin text-[#10b981]' : ''}`} />
+              </button>
+            )}
           </div>
         </div>
 

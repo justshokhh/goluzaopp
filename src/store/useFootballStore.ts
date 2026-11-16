@@ -188,7 +188,31 @@ export const useFootballStore = create<FootballStore>((set, get) => ({
       const dateStr = date.toISOString().split('T')[0];
 
       const oldMatches = get().matches;
-      const realMatches = await footballApi.getAllMatches(dateStr, forceRefresh);
+
+      // 1. Jonli o'yinlarni olish (API-Sports /fixtures?live=all)
+      const liveMatches = await footballApi.getLiveMatches(forceRefresh);
+
+      // 2. Kunning barcha o'yinlarini olish (fixtures?date=...)
+      const allMatches = await footballApi.getAllMatches(dateStr, forceRefresh);
+
+      // 3. Jonli o'yinlar va kunlik o'yinlarni birlashtirish
+      const mergedMap = new Map<string | number, Match>();
+
+      // Avval jonli o'yinlarni ro'yxat boshiga qo'yish
+      if (Array.isArray(liveMatches) && liveMatches.length > 0) {
+        liveMatches.forEach((m) => mergedMap.set(m.id, m));
+      }
+
+      // Keyin kunlik fixtures qo'shish
+      if (Array.isArray(allMatches) && allMatches.length > 0) {
+        allMatches.forEach((m) => {
+          if (!mergedMap.has(m.id)) {
+            mergedMap.set(m.id, m);
+          }
+        });
+      }
+
+      const realMatches = Array.from(mergedMap.values());
       if (realMatches && realMatches.length > 0) {
         // Real vaqtda yangi gol urilganini aniqlash (Score comparison)
         realMatches.forEach((newM) => {

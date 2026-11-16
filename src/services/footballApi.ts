@@ -140,8 +140,14 @@ const RAPIDAPI_HOST =
   'v3.football.api-sports.io';
 
 const isRapidApiHost = RAPIDAPI_HOST.includes('rapidapi.com');
+const isLocalhost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
 const BASE_URL = isRapidApiHost
   ? `https://${RAPIDAPI_HOST}/v3`
+  : isLocalhost
+  ? '/api-sports'
   : 'https://v3.football.api-sports.io';
 
 const apiClient: AxiosInstance = axios.create({
@@ -283,13 +289,13 @@ function mapApiFixtureToMatch(item: any): Match {
     homeTeam: {
       id: homeTeamId,
       name: teams.home?.name || 'Mezbon jamoa',
-      logo: getTeamLogo(homeTeamId, teams.home?.name),
+      logo: teams.home?.logo || getTeamLogo(homeTeamId, teams.home?.name),
       score: homeScore,
     },
     awayTeam: {
       id: awayTeamId,
       name: teams.away?.name || 'Mehmon jamoa',
-      logo: getTeamLogo(awayTeamId, teams.away?.name),
+      logo: teams.away?.logo || getTeamLogo(awayTeamId, teams.away?.name),
       score: awayScore,
     },
     score: { home: homeScore, away: awayScore },
