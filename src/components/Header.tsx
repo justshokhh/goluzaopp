@@ -54,20 +54,20 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleSimulation,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#07090e]/90 backdrop-blur-xl border-b border-white/[0.05] transition-colors">
+    <header className="sticky top-0 z-40 w-full bg-[#07090e]/85 backdrop-blur-2xl border-b border-white/[0.06] shadow-xl shadow-black/30 transition-all">
       <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
         {/* Yuqori qator: Logotip, Qidiruv, Ovoz va API holati */}
         <div className="flex h-14 items-center justify-between gap-3 sm:gap-6">
           {/* UzScore Logotipi */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-black font-black text-xs tracking-tighter shadow-md shadow-emerald-500/20">
+          <div className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-black font-black text-sm shadow-lg shadow-emerald-500/25 ring-1 ring-emerald-400/40 group-hover:scale-105 transition-transform">
               ⚽
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-[15px] font-extrabold tracking-tight text-white">
+              <span className="text-base font-black tracking-tight text-white">
                 Gol<span className="text-emerald-400">Uz</span>
               </span>
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest px-1.5 py-0.5 rounded bg-white/[0.04]">
+              <span className="text-[9px] font-extrabold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 uppercase tracking-widest px-1.5 py-0.5 rounded-md">
                 PRO
               </span>
             </div>
@@ -75,25 +75,25 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Qidiruv maydoni */}
           <div className="flex-1 max-w-xs sm:max-w-md">
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5">
-                <Search className="h-3.5 w-3.5 text-zinc-500" />
+            <div className="relative group">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Search className="h-3.5 w-3.5 text-zinc-400 group-focus-within:text-emerald-400 transition-colors" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 placeholder="Jamoa, o'yinchi yoki turnir..."
-                className="w-full rounded-lg bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.05] py-1.5 pl-8 pr-7 text-xs text-zinc-200 placeholder-zinc-500 transition-colors focus:border-emerald-500/50 focus:bg-[#0c101a] focus:outline-none"
+                className="w-full rounded-xl bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.06] py-1.5 pl-9 pr-7 text-xs text-zinc-100 placeholder-zinc-500 transition-all focus:border-emerald-500/50 focus:bg-[#0c121e] focus:ring-2 focus:ring-emerald-500/20 focus:outline-none shadow-inner"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => onSearchChange('')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-2 text-zinc-500 hover:text-white"
+                  className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-zinc-500 hover:text-white"
                   title="Tozalash"
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>

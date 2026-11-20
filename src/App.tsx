@@ -12,6 +12,7 @@ import { Header } from './components/Header';
 import { TournamentGroup } from './components/TournamentGroup';
 import { MatchRow } from './components/MatchRow';
 import { MatchCenterDrawer } from './components/MatchCenterDrawer';
+import { SpotlightMatch } from './components/SpotlightMatch';
 import { StandingsWidget, type TournamentKey } from './components/StandingsWidget';
 import { NewsFeed } from './features/news/NewsFeed';
 import { useFootballStore, type TournamentId } from './store/useFootballStore';
@@ -77,6 +78,17 @@ function App() {
   );
   const liveCount = liveMatches.length;
   const favoritesCount = favorites.size;
+
+  // Eng muhim jonli markaziy uchrashuv
+  const spotlightMatch = useMemo(() => {
+    if (searchQuery.trim()) return null;
+    return (
+      matches.find((m) => m.status === 'LIVE' && (m.homeTeam.name.includes('Paxtakor') || m.id === 'match_1')) ||
+      liveMatches[0] ||
+      matches[0] ||
+      null
+    );
+  }, [liveMatches, matches, searchQuery]);
 
   const getMatchTournamentKey = (match: Match): TournamentId => {
     const id = String(match.league?.id || match.tournamentId || '').toLowerCase();
@@ -209,7 +221,17 @@ function App() {
             {/* Asosiy 2/3 Ustunli Professional Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Chap Ustun (2 ustun kengligida): O'yinlar oqimi */}
-              <div className={`lg:col-span-2 space-y-3 ${mobileTab === 'standings' ? 'hidden lg:block' : 'block'}`}>
+              <div className={`lg:col-span-2 space-y-3.5 ${mobileTab === 'standings' ? 'hidden lg:block' : 'block'}`}>
+                {/* SofaScore uslubidagi Kun O'yini (Spotlight Match Hero) */}
+                {spotlightMatch && activeTab !== 'FINISHED' && activeTab !== 'SCHEDULED' && !searchQuery && (
+                  <SpotlightMatch
+                    match={spotlightMatch}
+                    onSelectMatch={(m) => setSelectedMatch(m)}
+                    onToggleFavorite={toggleFavorite}
+                    isFavorite={favorites.has(spotlightMatch.id)}
+                  />
+                )}
+
                 {groupedMatches.length === 0 ? (
                   <div className="rounded-2xl bg-[#0c0f17] border border-white/[0.04] p-10 text-center space-y-2">
                     <Trophy className="mx-auto h-9 w-9 text-zinc-600 mb-1" />

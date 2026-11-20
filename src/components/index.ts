@@ -10,3 +10,4 @@ export * from './AttackMomentum';
 export * from './ShotMap';
 export * from './PlayerHeatmap';
 export * from './LiveCommentary';
+export * from './SpotlightMatch';

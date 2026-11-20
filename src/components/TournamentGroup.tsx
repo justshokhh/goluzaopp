@@ -109,7 +109,7 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
   const theme = themes[tournamentKey];
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-[#0c0f17] border border-white/[0.04] mb-3 shadow-sm">
+    <section className="relative overflow-hidden rounded-2xl bg-[#0b0e15]/90 border border-white/[0.06] mb-3.5 shadow-lg shadow-black/25 hover:border-white/[0.09] transition-all">
       {/* Sarlavha paneli — real minimalist, toza tipografika */}
       <div
         onClick={() => setIsExpanded(!isExpanded)}
@@ -121,7 +121,7 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
             setIsExpanded(!isExpanded);
           }
         }}
-        className={`relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 cursor-pointer select-none transition-colors ${theme.headerBg}`}
+        className={`relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 cursor-pointer select-none transition-colors border-b border-white/[0.04] ${theme.headerBg}`}
       >
         {/* Chap qism: Liga logosi va nomi */}
         <div className="relative z-10 flex items-center gap-2.5 min-w-0">
