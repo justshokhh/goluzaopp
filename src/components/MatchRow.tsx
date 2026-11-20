@@ -6,7 +6,6 @@ import { TeamCrest } from './TeamCrest';
 export interface MatchRowProps {
   match: Match;
   isFavorite?: boolean;
-  isGoalFlash?: boolean;
   onToggleFavorite?: (matchId: string | number) => void;
   onSelectMatch?: (match: Match) => void;
   className?: string;
@@ -15,7 +14,6 @@ export interface MatchRowProps {
 export const MatchRow: React.FC<MatchRowProps> = ({
   match,
   isFavorite = false,
-  isGoalFlash = false,
   onToggleFavorite,
   onSelectMatch,
   className = '',
@@ -65,28 +63,18 @@ export const MatchRow: React.FC<MatchRowProps> = ({
           handleClick();
         }
       }}
-      className={`group relative flex items-center justify-between px-3 py-2 sm:px-4 sm:py-2.5 transition-all cursor-pointer select-none border-b border-white/[0.025] last:border-b-0 ${
-        isGoalFlash
-          ? 'bg-emerald-500/20 ring-1 ring-emerald-400 shadow-[0_0_18px_rgba(52,211,153,0.35)] animate-pulse z-10 rounded-lg'
-          : 'bg-transparent hover:bg-white/[0.025]'
-      } ${className}`}
+      className={`group relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 transition-colors cursor-pointer select-none bg-transparent hover:bg-white/[0.03] border-b border-white/[0.03] last:border-b-0 ${className}`}
     >
-      {/* Gol effekti bildirishnomasi */}
-      {isGoalFlash && (
-        <span className="absolute -top-1.5 right-12 z-20 rounded-full bg-emerald-500 px-2 py-0.5 text-[9px] font-black tracking-wider text-black shadow-md animate-bounce">
-          ⚽ GOOOL!
-        </span>
-      )}
-      {/* 1. Chap ustun: Holat / Vaqt / Daqiqa */}
-      <div className="flex w-12 sm:w-14 shrink-0 flex-col items-center justify-center text-center">
+      {/* 1. Chap ustun: Holat / Vaqt / Daqiqa — o'ta tiniq */}
+      <div className="flex w-14 sm:w-16 shrink-0 flex-col items-center justify-center text-center">
         {isLive && (
           <div className="flex flex-col items-center">
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 tabular-nums tracking-tight">
+            <span className="inline-flex items-center gap-1 text-[11.5px] font-bold text-emerald-400 tabular-nums tracking-tight">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               {match.minute}'
             </span>
             {match.htScore && (
-              <span className="text-[9px] font-medium text-zinc-500 tabular-nums">
+              <span className="text-[10px] font-medium text-zinc-400 tabular-nums">
                 HT {match.htScore.home}-{match.htScore.away}
               </span>
             )}
@@ -95,11 +83,11 @@ export const MatchRow: React.FC<MatchRowProps> = ({
 
         {isFinished && (
           <div className="flex flex-col items-center">
-            <span className="text-[11px] font-medium text-zinc-400 tracking-tight">
+            <span className="text-[11.5px] font-semibold text-zinc-300 tracking-tight">
               FT
             </span>
             {match.htScore && (
-              <span className="text-[9px] font-medium text-zinc-500 tabular-nums">
+              <span className="text-[10px] font-medium text-zinc-400 tabular-nums">
                 HT {match.htScore.home}-{match.htScore.away}
               </span>
             )}
@@ -108,19 +96,19 @@ export const MatchRow: React.FC<MatchRowProps> = ({
 
         {isScheduled && (
           <div className="flex flex-col items-center">
-            <span className="text-[11px] font-medium text-zinc-300 tabular-nums">
+            <span className="text-[12px] font-semibold text-white tabular-nums">
               {match.startTime || '21:00'}
             </span>
-            <span className="text-[9px] font-normal text-zinc-500">Bugun</span>
+            <span className="text-[9.5px] font-medium text-zinc-400">Bugun</span>
           </div>
         )}
       </div>
 
-      {/* 2. O'rta ustun: Mezbon va Mehmon jamoalar */}
-      <div className="flex-1 px-3 sm:px-4 min-w-0 flex flex-col justify-center space-y-1">
-        {/* Mezbon jamoa qatori */}
+      {/* 2. O'rta ustun: Mezbon va Mehmon jamoalar — sof kontrast */}
+      <div className="flex-1 px-3 sm:px-4 min-w-0 flex flex-col justify-center space-y-1.5">
+        {/* Mezbon jamoa */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
             <TeamCrest
               name={match.homeTeam.name}
               logoUrl={match.homeTeam.logo}
@@ -128,14 +116,14 @@ export const MatchRow: React.FC<MatchRowProps> = ({
               size="sm"
             />
             <span
-              className={`truncate text-[13px] tracking-tight transition-colors ${
+              className={`truncate text-[13.5px] tracking-tight transition-colors ${
                 isFinished && homeWinning
-                  ? 'text-white font-semibold'
+                  ? 'text-white font-bold'
                   : isFinished && awayWinning
                   ? 'text-zinc-400 font-normal'
                   : isLive && homeWinning
-                  ? 'text-white font-semibold'
-                  : 'text-zinc-200 font-medium'
+                  ? 'text-white font-bold'
+                  : 'text-zinc-100 font-medium'
               }`}
             >
               {match.homeTeam.name}
@@ -154,27 +142,27 @@ export const MatchRow: React.FC<MatchRowProps> = ({
           <div className="shrink-0 pl-2">
             {!isScheduled ? (
               <span
-                className={`text-[13px] tabular-nums transition-colors ${
+                className={`text-[14px] tabular-nums ${
                   isLive && homeWinning
                     ? 'text-emerald-400 font-bold'
                     : isFinished && homeWinning
                     ? 'text-white font-bold'
                     : isFinished && awayWinning
-                    ? 'text-zinc-500 font-medium'
-                    : 'text-zinc-200 font-medium'
+                    ? 'text-zinc-400 font-medium'
+                    : 'text-zinc-100 font-semibold'
                 }`}
               >
                 {homeScore}
               </span>
             ) : (
-              <span className="text-[11px] text-zinc-600 font-mono">-</span>
+              <span className="text-[12px] text-zinc-500 font-mono">-</span>
             )}
           </div>
         </div>
 
-        {/* Mehmon jamoa qatori */}
+        {/* Mehmon jamoa */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
             <TeamCrest
               name={match.awayTeam.name}
               logoUrl={match.awayTeam.logo}
@@ -182,14 +170,14 @@ export const MatchRow: React.FC<MatchRowProps> = ({
               size="sm"
             />
             <span
-              className={`truncate text-[13px] tracking-tight transition-colors ${
+              className={`truncate text-[13.5px] tracking-tight transition-colors ${
                 isFinished && awayWinning
-                  ? 'text-white font-semibold'
+                  ? 'text-white font-bold'
                   : isFinished && homeWinning
                   ? 'text-zinc-400 font-normal'
                   : isLive && awayWinning
-                  ? 'text-white font-semibold'
-                  : 'text-zinc-200 font-medium'
+                  ? 'text-white font-bold'
+                  : 'text-zinc-100 font-medium'
               }`}
             >
               {match.awayTeam.name}
@@ -208,31 +196,31 @@ export const MatchRow: React.FC<MatchRowProps> = ({
           <div className="shrink-0 pl-2">
             {!isScheduled ? (
               <span
-                className={`text-[13px] tabular-nums transition-colors ${
+                className={`text-[14px] tabular-nums ${
                   isLive && awayWinning
                     ? 'text-emerald-400 font-bold'
                     : isFinished && awayWinning
                     ? 'text-white font-bold'
                     : isFinished && homeWinning
-                    ? 'text-zinc-500 font-medium'
-                    : 'text-zinc-200 font-medium'
+                    ? 'text-zinc-400 font-medium'
+                    : 'text-zinc-100 font-semibold'
                 }`}
               >
                 {awayScore}
               </span>
             ) : (
-              <span className="text-[11px] text-zinc-600 font-mono">-</span>
+              <span className="text-[12px] text-zinc-500 font-mono">-</span>
             )}
           </div>
         </div>
       </div>
 
-      {/* 3. O'ng ustun: xG va Sevimli (Favorite) tugmasi */}
-      <div className="flex items-center gap-2 shrink-0 pl-1">
+      {/* 3. O'ng ustun: xG va Sevimli (Favorite) */}
+      <div className="flex items-center gap-2.5 shrink-0 pl-1">
         {match.xG && (
           <span
             title={`xG: ${match.homeTeam.name} ${match.xG.home} - ${match.xG.away} ${match.awayTeam.name}`}
-            className="hidden xs:inline-block text-[10px] text-zinc-500 tabular-nums"
+            className="hidden xs:inline-block text-[11px] text-zinc-400 tabular-nums font-medium"
           >
             xG {match.xG.home}:{match.xG.away}
           </span>
@@ -241,12 +229,12 @@ export const MatchRow: React.FC<MatchRowProps> = ({
         <button
           type="button"
           onClick={handleFavoriteClick}
-          className="flex h-6 w-6 items-center justify-center text-zinc-600 hover:text-amber-400 transition-colors"
+          className="flex h-7 w-7 items-center justify-center text-zinc-500 hover:text-amber-400 transition-colors"
           title={isFavorite ? "Sevimlilardan o'chirish" : "Sevimlilarga qo'shish"}
         >
           <Star
-            className={`h-3.5 w-3.5 transition-transform active:scale-125 ${
-              isFavorite ? 'fill-amber-400 text-amber-400' : 'text-zinc-600 hover:text-zinc-400'
+            className={`h-4 w-4 transition-transform active:scale-125 ${
+              isFavorite ? 'fill-amber-400 text-amber-400' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           />
         </button>

@@ -72,45 +72,46 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
   const [logoError, setLogoError] = useState(false);
   const tournamentKey = normalizeLeagueId(league?.id, league?.name);
 
-  // Turnirlarning o'ziga xos chuqur silliq fonlari
-  const themes = {
+  // Ranglar uyulib ketmasligi uchun: fon barcha ligalar uchun bir xil toza chuqur qorong'u,
+  // rang faqat nozik aksent nishonida (badge) namoyon bo'ladi
+  const leagueBadges = {
     ucl: {
-      headerBg: 'bg-gradient-to-r from-[#070e22] via-[#091536] to-[#070b18]',
-      accentColor: 'text-[#38bdf8]',
-      badgeColor: 'text-sky-400 bg-sky-500/10',
+      tag: 'UEFA Champions League',
+      badgeClass: 'text-sky-300 bg-sky-500/10 border-sky-500/20',
+      dotColor: 'bg-sky-400',
     },
     uel: {
-      headerBg: 'bg-gradient-to-r from-[#120a05] via-[#1f1006] to-[#090706]',
-      accentColor: 'text-[#fb923c]',
-      badgeColor: 'text-orange-400 bg-orange-500/10',
+      tag: 'UEFA Europa League',
+      badgeClass: 'text-orange-300 bg-orange-500/10 border-orange-500/20',
+      dotColor: 'bg-orange-400',
     },
     uz_superliga: {
-      headerBg: 'bg-gradient-to-r from-[#03140e] via-[#052119] to-[#050e0b]',
-      accentColor: 'text-[#34d399]',
-      badgeColor: 'text-emerald-400 bg-emerald-500/10',
+      tag: "O'zbekiston Superligasi",
+      badgeClass: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/20',
+      dotColor: 'bg-emerald-400',
     },
     premier_league: {
-      headerBg: 'bg-gradient-to-r from-[#13051c] via-[#1e072c] to-[#0a0410]',
-      accentColor: 'text-[#f472b6]',
-      badgeColor: 'text-pink-400 bg-pink-500/10',
+      tag: 'Premier League',
+      badgeClass: 'text-pink-300 bg-pink-500/10 border-pink-500/20',
+      dotColor: 'bg-pink-400',
     },
     laliga: {
-      headerBg: 'bg-gradient-to-r from-[#160406] via-[#24080b] to-[#0a0304]',
-      accentColor: 'text-[#f87171]',
-      badgeColor: 'text-rose-400 bg-rose-500/10',
+      tag: 'LaLiga EA Sports',
+      badgeClass: 'text-rose-300 bg-rose-500/10 border-rose-500/20',
+      dotColor: 'bg-rose-400',
     },
     default: {
-      headerBg: 'bg-[#0e121b]',
-      accentColor: 'text-zinc-400',
-      badgeColor: 'text-zinc-400 bg-zinc-800/40',
+      tag: 'Futbol',
+      badgeClass: 'text-zinc-300 bg-zinc-800/50 border-white/5',
+      dotColor: 'bg-zinc-400',
     },
   };
 
-  const theme = themes[tournamentKey];
+  const badgeInfo = leagueBadges[tournamentKey];
 
   return (
-    <section className="relative overflow-hidden rounded-2xl bg-[#0b0e15]/90 border border-white/[0.06] mb-3.5 shadow-lg shadow-black/25 hover:border-white/[0.09] transition-all">
-      {/* Sarlavha paneli — real minimalist, toza tipografika */}
+    <section className="relative overflow-hidden rounded-2xl bg-[#0c0f17] border border-white/[0.06] mb-3 transition-all">
+      {/* Sarlavha paneli — sof minimalist, ortiqcha gradientlarsiz, aniq tiniq */}
       <div
         onClick={() => setIsExpanded(!isExpanded)}
         role="button"
@@ -121,10 +122,10 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
             setIsExpanded(!isExpanded);
           }
         }}
-        className={`relative flex items-center justify-between px-3.5 py-2.5 sm:px-4 sm:py-3 cursor-pointer select-none transition-colors border-b border-white/[0.04] ${theme.headerBg}`}
+        className="relative flex items-center justify-between px-4 py-3 cursor-pointer select-none bg-[#0e121b] hover:bg-[#121722] transition-colors border-b border-white/[0.04]"
       >
         {/* Chap qism: Liga logosi va nomi */}
-        <div className="relative z-10 flex items-center gap-2.5 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="flex h-6 w-6 shrink-0 items-center justify-center">
             {league?.logo && !logoError ? (
               <img
@@ -134,7 +135,7 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
                 onError={() => setLogoError(true)}
               />
             ) : (
-              <Trophy className={`h-4 w-4 ${theme.accentColor}`} />
+              <Trophy className="h-4 w-4 text-zinc-400" />
             )}
           </div>
 
@@ -146,13 +147,21 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
                   onLeagueClick(league.id);
                 }
               }}
-              className="truncate text-[13.5px] font-semibold text-zinc-100 tracking-tight hover:text-white transition-colors cursor-pointer"
+              className="truncate text-[14px] font-bold text-white tracking-tight hover:underline cursor-pointer"
             >
               {league?.name || 'Turnir'}
             </span>
 
+            {/* Nozik liga yorlig'i */}
+            <span
+              className={`hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border ${badgeInfo.badgeClass}`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${badgeInfo.dotColor}`} />
+              {badgeInfo.tag}
+            </span>
+
             {league?.round && (
-              <span className="text-[11px] font-normal text-zinc-400 truncate">
+              <span className="text-[11.5px] font-medium text-zinc-400 truncate">
                 • {league.round}
               </span>
             )}
@@ -160,21 +169,21 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
         </div>
 
         {/* O'ng qism: Jonli va o'yinlar hisobi */}
-        <div className="relative z-10 flex items-center gap-2 shrink-0 pl-2">
+        <div className="flex items-center gap-3 shrink-0 pl-2">
           {liveMatchCount > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400 text-[10.5px] font-medium tabular-nums">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-emerald-400 text-[11px] font-bold tabular-nums">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               {liveMatchCount} Jonli
             </span>
           )}
 
-          <span className="text-[11px] font-normal text-zinc-500 tabular-nums">
+          <span className="text-[11.5px] font-medium text-zinc-400 tabular-nums">
             {matchCount} o'yin
           </span>
 
           <ChevronDown
-            className={`h-3.5 w-3.5 text-zinc-500 transition-transform duration-200 ${
-              isExpanded ? 'rotate-180 text-zinc-300' : 'rotate-0'
+            className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${
+              isExpanded ? 'rotate-180 text-white' : 'rotate-0'
             }`}
           />
         </div>
@@ -182,7 +191,7 @@ export const TournamentGroup: React.FC<TournamentGroupProps> = ({
 
       {/* O'yinlar ro'yxati */}
       {isExpanded && (
-        <div className="divide-y divide-white/[0.025] bg-[#07090e]">
+        <div className="divide-y divide-white/[0.03] bg-[#07090e]">
           {children}
         </div>
       )}
