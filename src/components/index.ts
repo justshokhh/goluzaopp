@@ -7,3 +7,6 @@ export * from './StandingsWidget';
 export * from './StandingsTable';
 export * from './TeamCrest';
 export * from './AttackMomentum';
+export * from './ShotMap';
+export * from './PlayerHeatmap';
+export * from './LiveCommentary';

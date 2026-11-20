@@ -12,6 +12,8 @@ import {
   CornerDownRight,
   TrendingUp,
   Percent,
+  Target,
+  MessageSquareText,
 } from 'lucide-react';
 import type {
   Match,
@@ -23,6 +25,9 @@ import type {
 import { TeamCrest } from './TeamCrest';
 import { mockMatchStats } from '../services/mockData';
 import { AttackMomentum } from './AttackMomentum';
+import { ShotMap } from './ShotMap';
+import { PlayerHeatmap } from './PlayerHeatmap';
+import { LiveCommentary } from './LiveCommentary';
 
 export interface MatchCenterDrawerProps {
   match: Match | null;
@@ -32,7 +37,7 @@ export interface MatchCenterDrawerProps {
   isFavorite?: boolean;
 }
 
-type TabType = 'summary' | 'stats' | 'lineups' | 'h2h';
+type TabType = 'summary' | 'stats' | 'shotmap' | 'lineups' | 'commentary' | 'h2h';
 
 export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
   match,
@@ -386,11 +391,11 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
         {/* ================================================================= */}
         {/* 2. TABLAR NAVIGATSIYASI */}
         {/* ================================================================= */}
-        <div className="flex items-center border-b border-white/[0.05] bg-[#0b0e14] px-4">
+        <div className="flex items-center border-b border-white/[0.05] bg-[#0b0e14] px-3 sm:px-4 overflow-x-auto no-scrollbar">
           <button
             type="button"
             onClick={() => setActiveTab('summary')}
-            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === 'summary'
                 ? 'border-[#10b981] text-[#10b981] font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -403,7 +408,7 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('stats')}
-            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === 'stats'
                 ? 'border-[#10b981] text-[#10b981] font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -415,8 +420,21 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
 
           <button
             type="button"
+            onClick={() => setActiveTab('shotmap')}
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all whitespace-nowrap ${
+              activeTab === 'shotmap'
+                ? 'border-[#10b981] text-[#10b981] font-semibold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Target className="h-3.5 w-3.5 text-emerald-400" />
+            <span>Zarbalar (xG)</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('lineups')}
-            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === 'lineups'
                 ? 'border-[#10b981] text-[#10b981] font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -428,15 +446,28 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
 
           <button
             type="button"
+            onClick={() => setActiveTab('commentary')}
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all whitespace-nowrap ${
+              activeTab === 'commentary'
+                ? 'border-[#10b981] text-[#10b981] font-semibold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <MessageSquareText className="h-3.5 w-3.5 text-sky-400" />
+            <span>Matnli Sharh</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => setActiveTab('h2h')}
-            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-all whitespace-nowrap ${
               activeTab === 'h2h'
                 ? 'border-[#10b981] text-[#10b981] font-semibold'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <TrendingUp className="h-3.5 w-3.5" />
-            <span>H2H & Jadval</span>
+            <span>H2H & Seriyalar</span>
           </button>
         </div>
 
@@ -576,7 +607,14 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
             </div>
           )}
 
-          {/* TAB 3: TARKIBLAR */}
+          {/* TAB 3: ZARBALAR XARITASI (SHOT MAP xG) */}
+          {activeTab === 'shotmap' && (
+            <div className="space-y-3">
+              <ShotMap match={match} />
+            </div>
+          )}
+
+          {/* TAB 4: TARKIBLAR */}
           {activeTab === 'lineups' && (
             <div className="space-y-3">
               {match.lineups ? (
@@ -705,31 +743,99 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
             </div>
           )}
 
-          {/* TAB 4: H2H & JADVAL */}
+          {/* TAB 5: MATNLI SHARH (LIVE COMMENTARY) */}
+          {activeTab === 'commentary' && (
+            <div className="space-y-3">
+              <LiveCommentary match={match} />
+            </div>
+          )}
+
+          {/* TAB 6: H2H & STATISTIKA */}
           {activeTab === 'h2h' && (
-            <div className="space-y-3 text-xs">
-              <h4 className="font-semibold text-slate-300 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#10b981]" /> O'zaro oxirgi o'yinlar
-              </h4>
-              <div className="space-y-1.5">
-                {[
-                  { date: '2025.10.12', home: match.homeTeam.name, away: match.awayTeam.name, score: '2 : 1' },
-                  { date: '2025.05.18', home: match.awayTeam.name, away: match.homeTeam.name, score: '1 : 1' },
-                  { date: '2024.11.02', home: match.homeTeam.name, away: match.awayTeam.name, score: '3 : 0' },
-                ].map((h2h, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between rounded-lg bg-[#0b0e14] px-3 py-2 border border-white/[0.03]"
-                  >
-                    <span className="text-slate-500 tabular-nums">{h2h.date}</span>
-                    <span className="font-medium text-slate-200">
-                      {h2h.home} vs {h2h.away}
-                    </span>
-                    <span className="font-bold text-[#10b981] tabular-nums">
-                      {h2h.score}
-                    </span>
+            <div className="space-y-4 text-xs">
+              {/* O'zaro uchrashuvlar qisqacha statistikasi */}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-xl bg-[#090d15] border border-white/[0.04] p-2.5">
+                  <span className="text-[10px] text-zinc-400 block">{match.homeTeam.shortName || match.homeTeam.name}</span>
+                  <span className="text-base font-bold text-emerald-400">2 G'alaba</span>
+                  <span className="text-[10px] text-zinc-500 block">50%</span>
+                </div>
+                <div className="rounded-xl bg-[#090d15] border border-white/[0.04] p-2.5">
+                  <span className="text-[10px] text-zinc-400 block">Durang</span>
+                  <span className="text-base font-bold text-amber-400">1 Durang</span>
+                  <span className="text-[10px] text-zinc-500 block">25%</span>
+                </div>
+                <div className="rounded-xl bg-[#090d15] border border-white/[0.04] p-2.5">
+                  <span className="text-[10px] text-zinc-400 block">{match.awayTeam.shortName || match.awayTeam.name}</span>
+                  <span className="text-base font-bold text-sky-400">1 G'alaba</span>
+                  <span className="text-[10px] text-zinc-500 block">25%</span>
+                </div>
+              </div>
+
+              {/* Jamoalar formasi (Oxirgi 5 o'yin) */}
+              <div className="rounded-xl bg-[#090d15] border border-white/[0.04] p-3 space-y-2">
+                <span className="text-[11px] font-semibold text-zinc-300 block">So'nggi O'yinlar Formasi</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-300 font-medium">{match.homeTeam.name}</span>
+                  <div className="flex items-center gap-1">
+                    {['W', 'W', 'D', 'W', 'L'].map((res, i) => (
+                      <span
+                        key={i}
+                        className={`w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold text-black ${
+                          res === 'W' ? 'bg-emerald-400' : res === 'D' ? 'bg-amber-400' : 'bg-rose-500 text-white'
+                        }`}
+                      >
+                        {res === 'W' ? "G'" : res === 'D' ? 'D' : 'M'}
+                      </span>
+                    ))}
                   </div>
-                ))}
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-zinc-300 font-medium">{match.awayTeam.name}</span>
+                  <div className="flex items-center gap-1">
+                    {['D', 'W', 'L', 'W', 'D'].map((res, i) => (
+                      <span
+                        key={i}
+                        className={`w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold text-black ${
+                          res === 'W' ? 'bg-emerald-400' : res === 'D' ? 'bg-amber-400' : 'bg-rose-500 text-white'
+                        }`}
+                      >
+                        {res === 'W' ? "G'" : res === 'D' ? 'D' : 'M'}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* O'zaro o'yinlar ro'yxati */}
+              <div className="space-y-2">
+                <h4 className="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#10b981]" /> O'zaro oxirgi uchrashuvlar
+                </h4>
+                <div className="space-y-1.5">
+                  {[
+                    { date: '2025.10.12', home: match.homeTeam.name, away: match.awayTeam.name, score: '2 : 1', tour: 'Superliga' },
+                    { date: '2025.05.18', home: match.awayTeam.name, away: match.homeTeam.name, score: '1 : 1', tour: 'Superliga' },
+                    { date: '2024.11.02', home: match.homeTeam.name, away: match.awayTeam.name, score: '3 : 0', tour: "O'zbekiston Kubogi" },
+                    { date: '2024.06.14', home: match.homeTeam.name, away: match.awayTeam.name, score: '1 : 2', tour: 'Superliga' },
+                  ].map((h2h, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between rounded-lg bg-[#0b0e14] px-3 py-2 border border-white/[0.03]"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-500 tabular-nums text-[11px]">{h2h.date}</span>
+                        <span className="text-[10px] text-zinc-500">({h2h.tour})</span>
+                      </div>
+                      <span className="font-medium text-slate-200">
+                        {h2h.home} vs {h2h.away}
+                      </span>
+                      <span className="font-bold text-[#10b981] tabular-nums">
+                        {h2h.score}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -745,7 +851,7 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
             }}
           >
             <div
-              className="relative w-full max-w-sm rounded-2xl bg-[#0c101c] border border-white/[0.1] p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150"
+              className="relative w-full max-w-md max-h-[88vh] overflow-y-auto no-scrollbar rounded-2xl bg-[#0c101c] border border-white/[0.1] p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
@@ -791,6 +897,11 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
                   <span className="text-emerald-400 font-bold text-sm block">Asosiy O'yinchi</span>
                   <span className="text-[10px] text-zinc-500">Taktik sxema</span>
                 </div>
+              </div>
+
+              {/* Futbolchi maydondagi issiqlik xaritasi (Player Heatmap) */}
+              <div className="pt-1">
+                <PlayerHeatmap player={selectedPlayer} teamType="home" />
               </div>
 
               <button
