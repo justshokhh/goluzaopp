@@ -12,6 +12,7 @@ import { create } from 'zustand';
 import type { Match, MatchEvent } from '../types/football';
 import { mockMatches } from '../services/mockData';
 import { footballApi, isApiConfigured } from '../services/footballApi';
+import { soundEffects } from '../services/soundEffects';
 
 // ============================================================================
 // TIPLAR
@@ -30,7 +31,8 @@ export type ActiveTab =
   | 'LIVE'
   | 'FINISHED'
   | 'SCHEDULED'
-  | 'FAVORITES';
+  | 'FAVORITES'
+  | 'NEWS';
 
 export type DateOffset = -1 | 0 | 1; // Kecha | Bugun | Ertaga
 
@@ -77,6 +79,8 @@ export interface FootballStore {
   setSearchQuery: (q: string) => void;
   toggleFavorite: (id: string | number) => void;
   dismissGoalNotification: () => void;
+  soundEnabled: boolean;
+  toggleSound: () => void;
   fetchRealMatches: (forceRefresh?: boolean) => Promise<void>;
   setCustomApiKey: (key: string) => void;
 
@@ -99,6 +103,33 @@ export interface FootballStore {
 // ============================================================================
 // YORDAMCHI FUNKSIYALAR
 // ============================================================================
+
+function loadInitialFavorites(): Set<string | number> {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const saved = window.localStorage.getItem('uzscore_favorites');
+      if (saved) {
+        const arr = JSON.parse(saved);
+        if (Array.isArray(arr) && arr.length > 0) {
+          return new Set(arr);
+        }
+      }
+    } catch {
+      // storage error
+    }
+  }
+  return new Set(['match-1', 'match-ucl-1']);
+}
+
+function saveFavorites(favorites: Set<string | number>): void {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      window.localStorage.setItem('uzscore_favorites', JSON.stringify(Array.from(favorites)));
+    } catch {
+      // storage error
+    }
+  }
+}
 
 function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -144,7 +175,12 @@ export const useFootballStore = create<FootballStore>((set, get) => ({
   selectedDate: 0,
   selectedMatchId: null,
   searchQuery: '',
-  favorites: new Set(['match-1', 'match-ucl-1']),
+  favorites: loadInitialFavorites(),
+  soundEnabled: soundEffects.isEnabled(),
+  toggleSound: () => {
+    const nextVal = soundEffects.toggle();
+    set({ soundEnabled: nextVal });
+  },
 
   matches: mockMatches.map((m) => ({ ...m })),
   isRealApiActive: isApiConfigured(),
@@ -237,7 +273,8 @@ export const useFootballStore = create<FootballStore>((set, get) => ({
                 });
               }, 4000);
 
-              // "GOOOOL!" xabarnomasi
+              // "GOOOOL!" xabarnomasi va ovozli signal
+              soundEffects.playGoalChime();
               const notif: GoalNotification = {
                 id: `real-goal-${Date.now()}-${newM.id}`,
                 matchId: newM.id,
@@ -319,6 +356,7 @@ export const useFootballStore = create<FootballStore>((set, get) => ({
       } else {
         next.add(id);
       }
+      saveFavorites(next);
       return { favorites: next };
     }),
 
@@ -431,7 +469,8 @@ export const useFootballStore = create<FootballStore>((set, get) => ({
           });
         }, 4000);
 
-        // "GOOOOL!" xabarnomasi
+        // "GOOOOL!" xabarnomasi va ovozli signal
+        soundEffects.playGoalChime();
         const notification: GoalNotification = {
           id: `notif-${Date.now()}`,
           matchId: target.id,

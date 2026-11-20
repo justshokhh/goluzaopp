@@ -6,3 +6,4 @@ export * from './MatchCenterDrawer';
 export * from './StandingsWidget';
 export * from './StandingsTable';
 export * from './TeamCrest';
+export * from './AttackMomentum';

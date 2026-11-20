@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   X,
   Trophy,
@@ -11,6 +11,7 @@ import {
   Tv,
   CornerDownRight,
   TrendingUp,
+  Percent,
 } from 'lucide-react';
 import type {
   Match,
@@ -21,6 +22,7 @@ import type {
 } from '../types/football';
 import { TeamCrest } from './TeamCrest';
 import { mockMatchStats } from '../services/mockData';
+import { AttackMomentum } from './AttackMomentum';
 
 export interface MatchCenterDrawerProps {
   match: Match | null;
@@ -38,6 +40,7 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
   onClose,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('summary');
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerLineup | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -95,6 +98,24 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
       passesAccurate: { home: 412, away: 348 },
       passAccuracyPct: { home: 84, away: 78 },
     };
+
+  // SofaScore G'alaba ehtimoli (Win Probability & Odds)
+  const winProb = useMemo(() => {
+    const homeXG = stats.expectedGoals?.home ?? 1.6;
+    const awayXG = stats.expectedGoals?.away ?? 1.1;
+    const total = homeXG + awayXG + 1.1;
+    const homePct = Math.min(78, Math.max(18, Math.round((homeXG / total) * 100)));
+    const awayPct = Math.min(78, Math.max(18, Math.round((awayXG / total) * 100)));
+    const drawPct = Math.max(12, 100 - homePct - awayPct);
+    return {
+      home: homePct,
+      draw: drawPct,
+      away: awayPct,
+      homeOdds: (100 / homePct).toFixed(2),
+      drawOdds: (100 / drawPct).toFixed(2),
+      awayOdds: (100 / awayPct).toFixed(2),
+    };
+  }, [stats]);
 
   // SofaScore reytingi rangi
   const getRatingBadgeColor = (rating?: number) => {
@@ -211,12 +232,14 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
             {line.map((player) => (
               <div
                 key={player.number}
+                onClick={() => setSelectedPlayer(player)}
                 className="group relative flex flex-col items-center cursor-pointer"
+                title={`${player.name} (#${player.number}) — Bosib tahlil qiling`}
               >
                 {/* Futbolchi doirasi — ortiqcha qalin ramkalarsiz */}
                 <div
-                  className={`relative flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-white text-[11px] font-bold shadow-sm transition-transform group-hover:scale-110 ${
-                    teamType === 'home' ? 'bg-sky-900 text-sky-100' : 'bg-emerald-950 text-emerald-100'
+                  className={`relative flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full text-white text-[11px] font-bold shadow-sm transition-transform group-hover:scale-125 group-active:scale-95 ${
+                    teamType === 'home' ? 'bg-sky-900 text-sky-100 ring-1 ring-sky-500/50' : 'bg-emerald-950 text-emerald-100 ring-1 ring-emerald-500/50'
                   }`}
                 >
                   <span>{player.number}</span>
@@ -423,7 +446,61 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
           {/* TAB 1: SHARH (SUMMARY) */}
           {activeTab === 'summary' && (
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* SofaScore G'alaba Ehtimolligi (Odds & Win Probability) */}
+              <div className="rounded-xl bg-[#090d15] border border-white/[0.05] p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-white flex items-center gap-1.5">
+                    <Percent className="w-3.5 h-3.5 text-emerald-400" />
+                    G'alaba Ehtimoli (Win Probability)
+                  </span>
+                  <span className="text-[10px] text-zinc-500 font-mono">1 - X - 2 Koeffitsient</span>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] font-bold">
+                  <div className="text-emerald-400">
+                    <span>1: {match.homeTeam.shortName || match.homeTeam.name.slice(0, 3)}</span>{' '}
+                    <span className="text-zinc-500 font-normal">({winProb.homeOdds})</span> {winProb.home}%
+                  </div>
+                  <div className="text-amber-400">
+                    <span>X: Durang</span>{' '}
+                    <span className="text-zinc-500 font-normal">({winProb.drawOdds})</span> {winProb.draw}%
+                  </div>
+                  <div className="text-sky-400">
+                    <span>2: {match.awayTeam.shortName || match.awayTeam.name.slice(0, 3)}</span>{' '}
+                    <span className="text-zinc-500 font-normal">({winProb.awayOdds})</span> {winProb.away}%
+                  </div>
+                </div>
+
+                {/* 3 qismli segment bar */}
+                <div className="h-2 w-full rounded-full bg-white/[0.04] overflow-hidden flex gap-0.5">
+                  <div
+                    style={{ width: `${winProb.home}%` }}
+                    className="h-full bg-emerald-500 rounded-l-full transition-all duration-500"
+                    title={`${match.homeTeam.name}: ${winProb.home}%`}
+                  />
+                  <div
+                    style={{ width: `${winProb.draw}%` }}
+                    className="h-full bg-amber-500/80 transition-all duration-500"
+                    title={`Durang: ${winProb.draw}%`}
+                  />
+                  <div
+                    style={{ width: `${winProb.away}%` }}
+                    className="h-full bg-sky-500 rounded-r-full transition-all duration-500"
+                    title={`${match.awayTeam.name}: ${winProb.away}%`}
+                  />
+                </div>
+              </div>
+
+              {/* SofaScore Hujum Bosimi (Attack Momentum) */}
+              <AttackMomentum match={match} />
+
+              {/* Voqealar lenti */}
+              <div>
+                <h4 className="text-xs font-semibold text-zinc-300 mb-2 flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-[#10b981]" />
+                  Uchrashuv Voqealari Xronologiyasi
+                </h4>
               {match.events && match.events.length > 0 ? (
                 <div className="relative border-l border-white/[0.08] ml-4 pl-4 space-y-3 py-1">
                   {match.events.map((event) => {
@@ -468,6 +545,7 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
                   Voqealar hali qayd etilmagan.
                 </div>
               )}
+              </div>
             </div>
           )}
 
@@ -560,6 +638,64 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
                       <span className="font-semibold text-white">{match.lineups.away.coach}</span>
                     </div>
                   </div>
+                  {/* Zaxira O'yinchilari (Substitutes) */}
+                  <div className="mt-3 space-y-2">
+                    <h4 className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-emerald-400" />
+                      Zaxira O'yinchilari (Bosing — tahlil uchun)
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {/* Mezbon zaxira */}
+                      <div className="rounded-lg bg-[#0b0e14] p-2.5 border border-white/[0.04] space-y-1.5">
+                        <span className="text-[11px] font-semibold text-emerald-400">{match.homeTeam.name}</span>
+                        <div className="space-y-1">
+                          {match.lineups.home.substitutes.map((sub) => (
+                            <div
+                              key={sub.number}
+                              onClick={() => setSelectedPlayer(sub)}
+                              className="flex items-center justify-between text-xs py-1 px-1.5 rounded hover:bg-white/[0.04] cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="w-5 text-zinc-500 font-mono text-[11px]">#{sub.number}</span>
+                                <span className="text-zinc-200">{sub.name}</span>
+                                <span className="text-[10px] text-zinc-500">({sub.pos})</span>
+                              </div>
+                              {sub.rating && (
+                                <span className={`px-1 rounded text-[9px] font-bold ${getRatingBadgeColor(sub.rating)}`}>
+                                  {sub.rating}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Mehmon zaxira */}
+                      <div className="rounded-lg bg-[#0b0e14] p-2.5 border border-white/[0.04] space-y-1.5">
+                        <span className="text-[11px] font-semibold text-sky-400">{match.awayTeam.name}</span>
+                        <div className="space-y-1">
+                          {match.lineups.away.substitutes.map((sub) => (
+                            <div
+                              key={sub.number}
+                              onClick={() => setSelectedPlayer(sub)}
+                              className="flex items-center justify-between text-xs py-1 px-1.5 rounded hover:bg-white/[0.04] cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="w-5 text-zinc-500 font-mono text-[11px]">#{sub.number}</span>
+                                <span className="text-zinc-200">{sub.name}</span>
+                                <span className="text-[10px] text-zinc-500">({sub.pos})</span>
+                              </div>
+                              {sub.rating && (
+                                <span className={`px-1 rounded text-[9px] font-bold ${getRatingBadgeColor(sub.rating)}`}>
+                                  {sub.rating}
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="py-6 text-center text-slate-500 text-xs">
@@ -598,6 +734,75 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
             </div>
           )}
         </div>
+
+        {/* O'yinchi batafsil profili modali */}
+        {selectedPlayer && (
+          <div
+            className="fixed inset-0 z-60 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-150"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedPlayer(null);
+            }}
+          >
+            <div
+              className="relative w-full max-w-sm rounded-2xl bg-[#0c101c] border border-white/[0.1] p-5 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 font-mono font-extrabold text-base ring-1 ring-emerald-500/30">
+                    #{selectedPlayer.number}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white text-sm">{selectedPlayer.name}</h3>
+                    <p className="text-[11px] text-zinc-400 flex items-center gap-1.5 mt-0.5">
+                      <span className="font-semibold text-emerald-400">{selectedPlayer.pos}</span>
+                      {selectedPlayer.country && (
+                        <>
+                          <span>•</span>
+                          <span>{selectedPlayer.country}</span>
+                        </>
+                      )}
+                      {selectedPlayer.isCaptain && (
+                        <span className="rounded bg-amber-400/20 text-amber-300 px-1 text-[9px] font-bold">KAPITAN</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPlayer(null)}
+                  className="rounded-lg p-1.5 text-zinc-400 hover:text-white hover:bg-white/[0.06]"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* SofaScore Reyting va ko'rsatkichlar */}
+              <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                <div className="rounded-xl bg-white/[0.03] p-3 border border-white/[0.04]">
+                  <span className="text-[10px] text-zinc-400 block mb-1">SofaScore Reyting</span>
+                  <span className={`inline-block px-3 py-1 rounded-md text-sm font-black ${getRatingBadgeColor(selectedPlayer.rating || 7.0)}`}>
+                    {selectedPlayer.rating ? selectedPlayer.rating.toFixed(1) : '7.1'}
+                  </span>
+                </div>
+                <div className="rounded-xl bg-white/[0.03] p-3 border border-white/[0.04]">
+                  <span className="text-[10px] text-zinc-400 block mb-1">Maydondagi roli</span>
+                  <span className="text-emerald-400 font-bold text-sm block">Asosiy O'yinchi</span>
+                  <span className="text-[10px] text-zinc-500">Taktik sxema</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedPlayer(null)}
+                className="w-full rounded-xl bg-emerald-500 py-2.5 text-xs font-bold text-black hover:bg-emerald-400 transition-colors shadow-lg shadow-emerald-500/20"
+              >
+                Yopish
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

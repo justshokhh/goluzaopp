@@ -6,6 +6,7 @@ import { TeamCrest } from './TeamCrest';
 export interface MatchRowProps {
   match: Match;
   isFavorite?: boolean;
+  isGoalFlash?: boolean;
   onToggleFavorite?: (matchId: string | number) => void;
   onSelectMatch?: (match: Match) => void;
   className?: string;
@@ -14,6 +15,7 @@ export interface MatchRowProps {
 export const MatchRow: React.FC<MatchRowProps> = ({
   match,
   isFavorite = false,
+  isGoalFlash = false,
   onToggleFavorite,
   onSelectMatch,
   className = '',
@@ -63,8 +65,18 @@ export const MatchRow: React.FC<MatchRowProps> = ({
           handleClick();
         }
       }}
-      className={`group relative flex items-center justify-between px-3 py-2 sm:px-4 sm:py-2.5 transition-colors cursor-pointer select-none bg-transparent hover:bg-white/[0.025] border-b border-white/[0.025] last:border-b-0 ${className}`}
+      className={`group relative flex items-center justify-between px-3 py-2 sm:px-4 sm:py-2.5 transition-all cursor-pointer select-none border-b border-white/[0.025] last:border-b-0 ${
+        isGoalFlash
+          ? 'bg-emerald-500/20 ring-1 ring-emerald-400 shadow-[0_0_18px_rgba(52,211,153,0.35)] animate-pulse z-10 rounded-lg'
+          : 'bg-transparent hover:bg-white/[0.025]'
+      } ${className}`}
     >
+      {/* Gol effekti bildirishnomasi */}
+      {isGoalFlash && (
+        <span className="absolute -top-1.5 right-12 z-20 rounded-full bg-emerald-500 px-2 py-0.5 text-[9px] font-black tracking-wider text-black shadow-md animate-bounce">
+          ⚽ GOOOL!
+        </span>
+      )}
       {/* 1. Chap ustun: Holat / Vaqt / Daqiqa */}
       <div className="flex w-12 sm:w-14 shrink-0 flex-col items-center justify-center text-center">
         {isLive && (
