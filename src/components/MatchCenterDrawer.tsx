@@ -56,36 +56,11 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !match) return null;
-
-  const isLive = match.status === 'LIVE';
-  const isFinished = match.status === 'FINISHED' || match.status === 'FT';
-  const homeScore = match.score?.home ?? match.homeTeam.score ?? 0;
-  const awayScore = match.score?.away ?? match.awayTeam.score ?? 0;
-
-  // Turnir bo'yicha tabiiy sarlavha foni
-  const theme = match.league?.theme || match.tournamentTheme || 'uz_superliga';
-  const getHeaderGradient = () => {
-    switch (theme) {
-      case 'ucl':
-        return 'bg-gradient-to-r from-[#081026] via-[#0c1a40] to-[#080d1a]';
-      case 'uel':
-        return 'bg-gradient-to-r from-[#140b06] via-[#241207] to-[#0a0807]';
-      case 'premier_league':
-        return 'bg-gradient-to-r from-[#170522] via-[#250937] to-[#0d0514]';
-      case 'laliga':
-        return 'bg-gradient-to-r from-[#1c0507] via-[#2d090d] to-[#0e0405]';
-      case 'uz_superliga':
-      default:
-        return 'bg-gradient-to-r from-[#031711] via-[#06261c] to-[#06120e]';
-    }
-  };
-
   const stats: MatchStats =
-    match.stats ||
-    mockMatchStats[match.id] || {
+    (match && match.stats) ||
+    (match && mockMatchStats[match.id]) || {
       ballPossession: { home: 54, away: 46 },
-      expectedGoals: { home: match.xG?.home ?? 1.84, away: match.xG?.away ?? 1.12 },
+      expectedGoals: { home: match?.xG?.home ?? 1.84, away: match?.xG?.away ?? 1.12 },
       bigChances: { home: 3, away: 1 },
       totalShots: { home: 14, away: 9 },
       shotsOnTarget: { home: 6, away: 3 },
@@ -116,6 +91,31 @@ export const MatchCenterDrawer: React.FC<MatchCenterDrawerProps> = ({
       awayOdds: (100 / awayPct).toFixed(2),
     };
   }, [stats]);
+
+  if (!isOpen || !match) return null;
+
+  const isLive = match.status === 'LIVE';
+  const isFinished = match.status === 'FINISHED' || match.status === 'FT';
+  const homeScore = match.score?.home ?? match.homeTeam.score ?? 0;
+  const awayScore = match.score?.away ?? match.awayTeam.score ?? 0;
+
+  // Turnir bo'yicha tabiiy sarlavha foni
+  const theme = match.league?.theme || match.tournamentTheme || 'uz_superliga';
+  const getHeaderGradient = () => {
+    switch (theme) {
+      case 'ucl':
+        return 'bg-gradient-to-r from-[#081026] via-[#0c1a40] to-[#080d1a]';
+      case 'uel':
+        return 'bg-gradient-to-r from-[#140b06] via-[#241207] to-[#0a0807]';
+      case 'premier_league':
+        return 'bg-gradient-to-r from-[#170522] via-[#250937] to-[#0d0514]';
+      case 'laliga':
+        return 'bg-gradient-to-r from-[#1c0507] via-[#2d090d] to-[#0e0405]';
+      case 'uz_superliga':
+      default:
+        return 'bg-gradient-to-r from-[#031711] via-[#06261c] to-[#06120e]';
+    }
+  };
 
   // SofaScore reytingi rangi
   const getRatingBadgeColor = (rating?: number) => {
